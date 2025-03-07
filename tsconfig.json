@@ -2,11 +2,13 @@
 	"compilerOptions": {
 		"target": "ES6",
 		"module": "commonjs",
-		"resolveJsonModule": true,
 		"outDir": "./dist",
 		"rootDir": "./src",
 		"strict": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"resolveJsonModule": true  
 	},
-	"include": ["src/**/*", "src/types/**/*"]
+	"include": ["src/**/*.ts"],  // Inclure tous les fichiers .ts de ton dossier src
+	"exclude": ["node_modules"]
+  
 }

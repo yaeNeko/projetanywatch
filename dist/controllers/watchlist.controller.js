@@ -12,8 +12,124 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStatus = void 0;
-const db_1 = __importDefault(require("../config/db")); // Connexion à la base de données
+exports.updateStatus = exports.getTopSeries = exports.getSeriesInWatchlist = exports.getAllWatchlists = exports.getWatchlist = void 0;
+const db_1 = __importDefault(require("../config/db"));
+const getWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const utilisateur_id = req.params.id; // Récupérer l'ID de l'utilisateur depuis les paramètres
+    try {
+        const result = yield db_1.default.query(`
+      SELECT
+      w.id AS watchlist_id,
+      w.nom AS watchlist_name,
+      sa.id AS serie_anime_id,
+      sa.nom AS serie_anime_name,
+      sa.type AS serie_anime_type
+      FROM
+      watchlists w
+      JOIN
+      watchlist_ajouts wa ON w.utilisateur_id = wa.utilisateur_id  -- Jointure correcte via utilisateur_id
+      JOIN
+      series_animes sa ON wa.serie_anime_id = sa.id
+      WHERE
+      w.utilisateur_id = $1;  -- ID de l'utilisateur
+
+        `, [utilisateur_id]);
+        // Vérifie si la requête a renvoyé des résultats
+        if (result.rows.length === 0) {
+            res.status(404).json({ message: "Aucune watchlist trouvée" });
+            return;
+        }
+        // Renvoie les résultats au format JSON
+        res.status(200).json(result.rows);
+    }
+    catch (error) {
+        console.error("Erreur lors de la récupération de la watchlist:", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+});
+exports.getWatchlist = getWatchlist;
+// Récupérer toutes les watchlists d'un utilisateur
+const getAllWatchlists = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.params.userId;
+    try {
+        const result = yield db_1.default.query(`SELECT * FROM watchlists WHERE utilisateur_id = $1`, [userId]);
+        if (result.rows.length === 0) {
+            res
+                .status(404)
+                .json({ message: "Aucune watchlist trouvée pour cet utilisateur" });
+            return;
+        }
+        res.status(200).json(result.rows);
+    }
+    catch (error) {
+        console.error("Erreur lors de la récupération des watchlists:", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+});
+exports.getAllWatchlists = getAllWatchlists;
+// Récupérer les séries d'une watchlist spécifique
+const getSeriesInWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const watchlistId = req.params.watchlistId; // ID de la watchlist
+    try {
+        const result = yield db_1.default.query(`SELECT
+  w.id AS watchlist_id,
+  w.nom AS watchlist_name,
+  sa.id AS serie_anime_id,
+  sa.nom AS serie_anime_name,
+  sa.type AS serie_anime_type
+FROM
+  watchlists w
+JOIN
+  watchlist_ajouts wa ON w.utilisateur_id = wa.utilisateur_id
+JOIN
+  series_animes sa ON wa.serie_anime_id = sa.id
+WHERE
+  w.id = $1;  -- On filtre sur l'ID de la watchlist
+`, [watchlistId]);
+        if (result.rows.length === 0) {
+            res
+                .status(404)
+                .json({ message: "Aucune série trouvée dans cette watchlist" });
+            return;
+        }
+        res.status(200).json(result.rows);
+    }
+    catch (error) {
+        console.error("Erreur lors de la récupération des séries de la watchlist:", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+});
+exports.getSeriesInWatchlist = getSeriesInWatchlist;
+//Récuperer les 5 series les plus ajoutées aux watchlists
+const getTopSeries = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Route /api/watchlist/series/top atteinte");
+    try {
+        const result = yield db_1.default.query(`SELECT
+         sa.id AS serie_anime_id,
+         sa.nom AS serie_anime_name,
+         sa.type AS serie_anime_type,
+         COUNT(wa.serie_anime_id) AS ajout_count
+      FROM
+         watchlist_ajouts wa
+      JOIN
+         series_animes sa ON wa.serie_anime_id = sa.id
+      GROUP BY
+         sa.id
+      ORDER BY
+         ajout_count DESC
+      LIMIT 5;`);
+        if (result.rows.length === 0) {
+            res.status(404).json({ message: "Aucune série trouvée" });
+            return;
+        }
+        res.status(200).json(result.rows);
+    }
+    catch (error) {
+        console.error("Erreur lors de la récupération des séries:", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+});
+exports.getTopSeries = getTopSeries;
 // Mise à jour du statut d'une série/animé dans la watchlist
 const updateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { watchlistId, serieAnimeId } = req.params; // Récupère les paramètres d'URL : watchlistId et serieAnimeId
