@@ -1,23 +1,22 @@
 {
-  "name": "anywatch",
-  "version": "1.0.0",
-  "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://gitlab.com/julesbsz/anywatch.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://gitlab.com/julesbsz/anywatch/issues"
-  },
-  "homepage": "https://gitlab.com/julesbsz/anywatch#readme",
-  "dependencies": {
-    "express": "^4.21.2"
-  }
+	"name": "anywatch",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+		"build": "tsc",
+		"start": "node dist/index.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.21.2"
+	},
+	"devDependencies": {
+		"@types/express": "^5.0.0",
+		"ts-node-dev": "^2.0.0",
+		"typescript": "^5.8.2"
+	}
 }
