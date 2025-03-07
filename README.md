@@ -23,7 +23,7 @@
 
     ```bash
     # Authentication
-    JWT_SECRET="un_super_secret_top_secret"
+    JWT_SECRET="m8%_87m35akdhwAakd!%3H@45!ShjqwktzJhx"
 
     # Database
     DB_HOST=

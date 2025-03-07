@@ -1,9 +1,9 @@
-import express from 'express';
-import { getUserProfile } from '../controllers/user.controller'; // Importer la fonction du contrôleur
+import { Router } from 'express';
+import { getUserProfile } from '../controllers/user.controller';
 
-const router = express.Router();
+const router = Router();
 
-// Route pour récupérer le profil d'un utilisateur par ID
-router.get('/profil/:id', getUserProfile);
+// Définition de la route pour récupérer un profil par ID
+router.get('/:id', getUserProfile);
 
 export default router;
