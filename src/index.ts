@@ -5,7 +5,9 @@ import watchlistRoutes from './routes/watchlist.routes';
 import client from "./config/db";
 import swaggerUi from 'swagger-ui-express';
 import reviewRoutes from "./routes/review.routes";
-import swaggerSpec from './swagger-output.json';  // Importer le fichier généré
+import swaggerSpec from './swagger-output.json'; 
+import subscriptionRoutes from "./routes/subscription.routes";
+
 
 const port = process.env.PORT || 4000;
 
@@ -34,6 +36,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use('/api/watchlist', watchlistRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api", subscriptionRoutes);
 
 
 // Démarrage du serveur
