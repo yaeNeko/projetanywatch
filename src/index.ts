@@ -1,6 +1,7 @@
 import express from "express";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from './routes/user.routes';
+import watchlistRoutes from './routes/watchlist.routes';
 import client from "./config/db";
 
 
@@ -26,6 +27,7 @@ app.get("/test", async (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use('/api/watchlist', watchlistRoutes);
 
 // Démarrage du serveur
 app.listen(port, () => {
