@@ -4,7 +4,7 @@ import {
   getWatchlist,
 } from "../controllers/watchlist.controller";
 import { getAllWatchlists } from "../controllers/watchlist.controller";
-import { getSeriesInWatchlist, updateStatus } from "../controllers/watchlist.controller";
+import { getSeriesInWatchlist, updateStatus, removeFromWatchlist } from "../controllers/watchlist.controller";
 
 const router = Router();
 
@@ -22,5 +22,7 @@ router.get("/series/top", getTopSeries);
 
 // Route PATCH pour changer le statut d'un animé/série dans la watchlist
 router.patch('/statut/:watchlistId/:serieAnimeId', updateStatus);
+
+router.delete('/supprimer/:watchlistId/:serieAnimeId', removeFromWatchlist);
 
 export default router;

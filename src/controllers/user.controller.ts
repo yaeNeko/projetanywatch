@@ -139,3 +139,32 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
   }
 };
 
+
+// Supprimer un utilisateur
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req.params;
+
+    try {
+        // Vérifier si l'utilisateur existe
+        const checkUser = await client.query('SELECT * FROM utilisateurs WHERE id = $1', [userId]);
+
+        if (checkUser.rowCount === 0) {
+            res.status(404).json({ message: 'Utilisateur non trouvé' });
+            return;
+        }
+
+        // Supprimer les dépendances avant l'utilisateur
+        await client.query('DELETE FROM avis WHERE utilisateur_id = $1', [userId]);
+        await client.query('DELETE FROM watchlist_ajouts WHERE utilisateur_id = $1', [userId]);
+        await client.query('DELETE FROM abonnes WHERE utilisateur_id = $1', [userId]);
+        await client.query('DELETE FROM watchlists WHERE utilisateur_id = $1', [userId]);
+
+        // Supprimer l'utilisateur
+        await client.query('DELETE FROM utilisateurs WHERE id = $1', [userId]);
+
+        res.status(200).json({ message: 'Compte utilisateur supprimé avec succès' });
+    } catch (error) {
+        console.error('Erreur lors de la suppression du compte utilisateur :', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+};

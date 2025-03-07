@@ -96,3 +96,59 @@ export const getReviewsForSerieAnime = async (req: Request, res: Response): Prom
 	  res.status(500).json({ message: "Erreur serveur" });
 	}
   };
+
+
+
+// Modifier un avis (uniquement pour les abonnés VIP)
+export const updateReview = async (req: Request, res: Response): Promise<void> => {
+    const { utilisateur_id, serie_anime_id } = req.params;
+    const { note, commentaire } = req.body;
+
+    try {
+        // Vérifier si l'utilisateur est un abonné avec accès illimité aux commentaires
+        const abonnement = await client.query(
+            `SELECT abonnements.accesillimitecommentaires 
+             FROM abonnes 
+             JOIN abonnements ON abonnes.abonnement_id = abonnements.id
+             WHERE abonnes.utilisateur_id = $1 
+             AND abonnements.actif = true`,
+            [utilisateur_id]
+        );
+
+        if (abonnement.rowCount === 0 || !abonnement.rows[0].accesillimitecommentaires) {
+            res.status(403).json({ message: "Accès refusé : abonnement VIP requis" });
+            return;
+        }
+
+        // Vérifier si l'avis existe
+        const existingReview = await client.query(
+            `SELECT * FROM avis WHERE utilisateur_id = $1 AND serie_anime_id = $2`,
+            [utilisateur_id, serie_anime_id]
+        );
+
+        if (existingReview.rowCount === 0) {
+            res.status(404).json({ message: "Avis non trouvé" });
+            return;
+        }
+
+        // Mettre à jour l'avis
+        const updatedReview = await client.query(
+            `UPDATE avis 
+             SET note = COALESCE($1, note), 
+                 commentaire = COALESCE($2, commentaire), 
+                 date_creation = NOW() 
+             WHERE utilisateur_id = $3 AND serie_anime_id = $4 
+             RETURNING *`,
+            [note, commentaire, utilisateur_id, serie_anime_id]
+        );
+
+        res.status(200).json({
+            message: "Avis mis à jour avec succès",
+            avis: updatedReview.rows[0],
+        });
+
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour de l'avis :", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
