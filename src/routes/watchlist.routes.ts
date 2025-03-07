@@ -4,7 +4,7 @@ import {
   getWatchlist,
 } from "../controllers/watchlist.controller";
 import { getAllWatchlists } from "../controllers/watchlist.controller";
-import { getSeriesInWatchlist } from "../controllers/watchlist.controller";
+import { getSeriesInWatchlist, updateStatus } from "../controllers/watchlist.controller";
 
 const router = Router();
 
@@ -19,5 +19,8 @@ router.get("/:watchlistId/series", getSeriesInWatchlist);
 
 // Route pour Récupérer le TOP 5 des plus ajoutés en watchlist
 router.get("/series/top", getTopSeries);
+
+// Route PATCH pour changer le statut d'un animé/série dans la watchlist
+router.patch('/statut/:watchlistId/:serieAnimeId', updateStatus);
 
 export default router;
