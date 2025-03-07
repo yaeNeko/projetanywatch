@@ -1,6 +1,6 @@
 
 import { Router } from "express";
-import { getUserProfile , updateVisibility, updateUserProfile } from "../controllers/user.controller";
+import { getUserProfile , updateVisibility, updateUserProfile, deleteUser } from "../controllers/user.controller";
 import { createRateLimiter } from "../middlewares/rateLimit.middleware";
 
 const router = Router();
@@ -15,6 +15,8 @@ router.patch('/visibility/:id', updateVisibility);
 // Route PUT pour changer les infos de l'utilisateur
 router.put('/modification/:id', updateUserProfile);
 
+// Surpprimer un utilisateur
+router.delete('/supprimer/:userId', deleteUser);
 
 export default router;
 
