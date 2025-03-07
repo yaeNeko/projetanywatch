@@ -1,11 +1,13 @@
 import express from "express";
-import authRoutes from "./routes/auth.routes";
-import userRoutes from './routes/user.routes';
-import watchlistRoutes from './routes/watchlist.routes';
 import client from "./config/db";
 
+// Routes
+import watchlistRoutes from './routes/watchlist.routes'; 
+import authRoutes from "./routes/auth.routes";
+import userRoutes from "./routes/user.routes";
+import reviewRoutes from "./routes/review.routes";
 
-const port = process.env.PORT || 4000;  
+const port = process.env.PORT || 4000;
 
 const app = express();
 
@@ -27,7 +29,8 @@ app.get("/test", async (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use('/api/watchlist', watchlistRoutes);
+app.use('/api/watchlist', watchlistRoutes); // Garde cette ligne pour la route watchlist
+app.use("/api/reviews", reviewRoutes);
 
 // Démarrage du serveur
 app.listen(port, () => {
