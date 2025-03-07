@@ -54,3 +54,45 @@ export const createReview = async (req: Request, res: Response, next: NextFuncti
 		res.status(500).json({ message: "Erreur serveur lors de l'ajout de l'avis." });
 	}
 };
+
+// Fonction pour récupérer les avis d'une série ou d'un animé
+export const getReviewsForSerieAnime = async (req: Request, res: Response): Promise<void> => {
+	const { serie_anime_id } = req.params; // Récupère l'ID de la série/animé depuis les paramètres de la requête
+  
+	try {
+	  // Requête SQL pour récupérer les avis associés à l'ID de la série/animé
+	  const result = await client.query(
+		`SELECT
+		   r.id,
+		   r.utilisateur_id,
+		   r.serie_anime_id,
+		   r.note,
+		   r.commentaire,
+		   r.pseudo_anonyme,
+		   r.date_creation,
+		   sa.type,
+		   u.pseudo AS utilisateur_pseudo
+		FROM
+		   avis r
+		JOIN
+		   series_animes sa ON r.serie_anime_id = sa.id
+		LEFT JOIN
+		   utilisateurs u ON r.utilisateur_id = u.id
+		WHERE
+		   r.serie_anime_id = $1
+		ORDER BY
+		   r.date_creation DESC;`,
+		[serie_anime_id]
+	  );
+  
+	  if (result.rows.length === 0) {
+		res.status(404).json({ message: "Aucun avis trouvé pour cette série/animé." });
+		return;
+	  }
+  
+	  res.status(200).json(result.rows);
+	} catch (error) {
+	  console.error("Erreur lors de la récupération des avis:", error);
+	  res.status(500).json({ message: "Erreur serveur" });
+	}
+  };

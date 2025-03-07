@@ -9,7 +9,7 @@ export const getWatchlist = async (
   const utilisateur_id = req.params.id; // Récupérer l'ID de l'utilisateur depuis les paramètres
 
   try {
-    // Requête SQL pour récupérer les séries et animés associés à la watchlist de l'utilisateur
+    
     const result = await client.query(
       `
       SELECT
@@ -46,6 +46,7 @@ export const getWatchlist = async (
 };
 
 // Récupérer toutes les watchlists d'un utilisateur
+
 export const getAllWatchlists = async (
   req: Request,
   res: Response
@@ -73,6 +74,7 @@ export const getAllWatchlists = async (
 };
 
 // Récupérer les séries d'une watchlist spécifique
+
 export const getSeriesInWatchlist = async (
   req: Request,
   res: Response
@@ -117,11 +119,12 @@ WHERE
 };
 
 //Récuperer les 5 series les plus ajoutées aux watchlists
+
 export const getTopSeries = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  console.log("Route /api/watchlist/series/top atteinte"); // Vérifie que la route est bien appelée
+  console.log("Route /api/watchlist/series/top atteinte"); 
   try {
     const result = await client.query(
       `SELECT

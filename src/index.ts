@@ -32,7 +32,7 @@ app.get("/test", async (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use('/api/watchlist', watchlistRoutes); 
+app.use('/api/watchlist', watchlistRoutes);
 app.use("/api/reviews", reviewRoutes);
 
 
