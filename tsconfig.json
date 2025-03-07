@@ -8,7 +8,7 @@
 		"esModuleInterop": true,
 		"resolveJsonModule": true  
 	},
-	"include": ["src/**/*.ts"],  // Inclure tous les fichiers .ts de ton dossier src
+	"include": ["src/**/*.ts"], 
 	"exclude": ["node_modules"]
   
 }
