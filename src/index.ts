@@ -3,8 +3,8 @@ import authRoutes from "./routes/auth.routes";
 import userRoutes from './routes/user.routes';
 import client from "./config/db";
 
-// Port fixe défini par la variable d'environnement ou un autre port de ton choix
-const port = process.env.PORT || 4000;  // Utilisation du port 4000 si aucune variable d'environnement n'est définie
+
+const port = process.env.PORT || 4000;  
 
 const app = express();
 
