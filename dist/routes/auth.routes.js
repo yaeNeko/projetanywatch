@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const auth_controller_1 = require("../controllers/auth.controller");
+const rateLimit_middleware_1 = require("../middlewares/rateLimit.middleware");
 const router = (0, express_1.Router)();
-router.post("/register", auth_controller_1.signup);
-router.post("/login", auth_controller_1.login);
+const rateLimiter = (0, rateLimit_middleware_1.createRateLimiter)(1000, 1);
+router.post("/register", rateLimiter, auth_controller_1.signup);
+router.post("/login", rateLimiter, auth_controller_1.login);
 exports.default = router;
