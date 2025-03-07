@@ -22,7 +22,15 @@
 3. **Créer un fichier .env dans la racine**
 
     ```bash
-    DATABASE_URL=URL_DE_LA_BD
+    # Authentication
+    JWT_SECRET="une_phrase_secrete"
+
+    # Database
+    DB_HOST=
+    DB_PORT=
+    DB_USER=
+    DB_PASSWORD=
+    DB_NAME=
     ```
 
 4. **Démarrer l'API**

@@ -6,7 +6,6 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use("/api/auth", authRoutes);
 
 app.get("/", async (req, res) => {
 	res.json({ message: "API REST avec Express en TypeScript" });
@@ -21,6 +20,8 @@ app.get("/test", async (req, res) => {
 		res.status(500).json({ error: "Erreur de connexion" });
 	}
 });
+
+app.use("/api/auth", authRoutes);
 
 // Démarrage du serveur
 app.listen(port, () => {
