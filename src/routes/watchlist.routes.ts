@@ -23,6 +23,7 @@ router.get("/series/top", getTopSeries);
 // Route PATCH pour changer le statut d'un animé/série dans la watchlist
 router.patch('/statut/:watchlistId/:serieAnimeId', updateStatus);
 
+// Route pour supprimer un animé/série dans la watchlist
 router.delete('/supprimer/:watchlistId/:serieAnimeId', removeFromWatchlist);
 
 export default router;

@@ -12,7 +12,7 @@ const endpointsFiles = ['./routes/**/*.ts'];  // Si tu utilises TypeScript
 const doc = {
   info: {
     title: 'API REST',
-    description: 'Documentation de l\'API de l\'application',
+    description: 'Documentation de l\'API Anywatch',
     version: '1.0.0',
   },
   host: 'localhost:4000',  // Modifie selon ton hôte et ton port

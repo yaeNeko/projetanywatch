@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserProfile = exports.updateVisibility = exports.getUserProfile = void 0;
+exports.deleteUser = exports.updateUserProfile = exports.updateVisibility = exports.getUserProfile = void 0;
 const db_1 = __importDefault(require("../config/db")); // Connexion à la base de données
 const getUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.params.id; // Récupère l'ID de l'utilisateur depuis les paramètres de la requête
@@ -120,3 +120,28 @@ const updateUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.updateUserProfile = updateUserProfile;
+// Supprimer un utilisateur
+const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.params;
+    try {
+        // Vérifier si l'utilisateur existe
+        const checkUser = yield db_1.default.query('SELECT * FROM utilisateurs WHERE id = $1', [userId]);
+        if (checkUser.rowCount === 0) {
+            res.status(404).json({ message: 'Utilisateur non trouvé' });
+            return;
+        }
+        // Supprimer les dépendances avant l'utilisateur
+        yield db_1.default.query('DELETE FROM avis WHERE utilisateur_id = $1', [userId]);
+        yield db_1.default.query('DELETE FROM watchlist_ajouts WHERE utilisateur_id = $1', [userId]);
+        yield db_1.default.query('DELETE FROM abonnes WHERE utilisateur_id = $1', [userId]);
+        yield db_1.default.query('DELETE FROM watchlists WHERE utilisateur_id = $1', [userId]);
+        // Supprimer l'utilisateur
+        yield db_1.default.query('DELETE FROM utilisateurs WHERE id = $1', [userId]);
+        res.status(200).json({ message: 'Compte utilisateur supprimé avec succès' });
+    }
+    catch (error) {
+        console.error('Erreur lors de la suppression du compte utilisateur :', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+});
+exports.deleteUser = deleteUser;

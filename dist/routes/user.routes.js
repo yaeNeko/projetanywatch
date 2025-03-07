@@ -11,4 +11,6 @@ router.get("/:id", rateLimiter, user_controller_1.getUserProfile);
 router.patch('/visibility/:id', user_controller_1.updateVisibility);
 // Route PUT pour changer les infos de l'utilisateur
 router.put('/modification/:id', user_controller_1.updateUserProfile);
+// Surpprimer un utilisateur
+router.delete('/supprimer/:userId', user_controller_1.deleteUser);
 exports.default = router;

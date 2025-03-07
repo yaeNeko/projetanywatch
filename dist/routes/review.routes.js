@@ -9,4 +9,5 @@ const router = (0, express_1.Router)();
 const rateLimiter = (0, rateLimit_middleware_1.createRateLimiter)(1000, 1);
 router.post("/", auth_middleware_1.authenticateToken, rateLimiter, review_controller_1.createReview);
 router.get("/:serie_anime_id", review_controller_2.getReviewsForSerieAnime);
+router.patch('/:utilisateur_id/:serie_anime_id', review_controller_2.updateReview);
 exports.default = router;

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateStatus = exports.getTopSeries = exports.getSeriesInWatchlist = exports.getAllWatchlists = exports.getWatchlist = void 0;
+exports.removeFromWatchlist = exports.updateStatus = exports.getTopSeries = exports.getSeriesInWatchlist = exports.getAllWatchlists = exports.getWatchlist = void 0;
 const db_1 = __importDefault(require("../config/db"));
 const getWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const utilisateur_id = req.params.id; // Récupérer l'ID de l'utilisateur depuis les paramètres
@@ -164,3 +164,23 @@ const updateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.updateStatus = updateStatus;
+// Supprimer une série/animé de sa watchlist
+const removeFromWatchlist = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { watchlistId, serieAnimeId } = req.params;
+    try {
+        // Vérifier si l'élément existe dans la watchlist
+        const checkExist = yield db_1.default.query('SELECT * FROM watchlist_items WHERE watchlist_id = $1 AND serie_anime_id = $2', [watchlistId, serieAnimeId]);
+        if (checkExist.rowCount === 0) {
+            res.status(404).json({ message: 'Série/animé non trouvé dans la watchlist' });
+            return;
+        }
+        // Supprimer l'élément
+        yield db_1.default.query('DELETE FROM watchlist_items WHERE watchlist_id = $1 AND serie_anime_id = $2', [watchlistId, serieAnimeId]);
+        res.status(200).json({ message: 'Série/animé retiré de la watchlist avec succès' });
+    }
+    catch (error) {
+        console.error('Erreur lors de la suppression de la watchlist :', error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+});
+exports.removeFromWatchlist = removeFromWatchlist;
