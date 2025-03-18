@@ -1,10 +1,7 @@
 import { Router } from "express";
-import {
-  getTopSeries,
-  getWatchlist,
-} from "../controllers/watchlist.controller";
+import { getTopSeries, getWatchlist } from "../controllers/watchlist.controller";
 import { getAllWatchlists } from "../controllers/watchlist.controller";
-import { getSeriesInWatchlist, updateStatus, removeFromWatchlist } from "../controllers/watchlist.controller";
+import { getSeriesInWatchlist, updateStatus, removeFromWatchlist, createWatchlist, addToWatchlist } from "../controllers/watchlist.controller";
 
 const router = Router();
 
@@ -21,9 +18,15 @@ router.get("/:watchlistId/series", getSeriesInWatchlist);
 router.get("/series/top", getTopSeries);
 
 // Route PATCH pour changer le statut d'un animé/série dans la watchlist
-router.patch('/statut/:watchlistId/:serieAnimeId', updateStatus);
+router.patch("/statut/:watchlistId/:serieAnimeId", updateStatus);
 
 // Route pour supprimer un animé/série dans la watchlist
-router.delete('/supprimer/:watchlistId/:serieAnimeId', removeFromWatchlist);
+router.delete("/supprimer/:watchlistId/:serieAnimeId", removeFromWatchlist);
+
+// Route pour créer une nouvelle watchlist
+router.post("/creer", createWatchlist);
+
+// Route pour ajouter une série/animé à une watchlist
+router.post("/ajouter/:watchlistId/:serieAnimeId", addToWatchlist);
 
 export default router;
