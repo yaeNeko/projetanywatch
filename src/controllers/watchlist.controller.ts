@@ -5,6 +5,14 @@ import client from "../config/db";
 export const createWatchlist = async (req: Request, res: Response): Promise<void> => {
   const { utilisateur_id, nom } = req.body;
 
+  if (!utilisateur_id || !utilisateur_id.trim()) {
+    res.status(400).json({ message: "L'id de l'utilisateur est obligatoire." });
+  }
+
+  if (!nom || !nom.trim()) {
+    res.status(400).json({ message: "Le nom de la watchlist est obligatoire." });
+  }
+
   try {
     const result = await client.query("INSERT INTO watchlists (utilisateur_id, nom) VALUES ($1, $2) RETURNING *", [utilisateur_id, nom]);
 
@@ -33,7 +41,7 @@ export const addToWatchlist = async (req: Request, res: Response): Promise<void>
     }
 
     // Ajouter la série/animé à la watchlist
-    const result = await client.query("INSERT INTO watchlist_items (watchlist_id, serie_anime_id, statut) VALUES ($1, $2, $3) RETURNING *", [watchlistId, serieAnimeId, statut || "non vu"]);
+    const result = await client.query("INSERT INTO watchlist_items (watchlist_id, serie_anime_id, statut) VALUES ($1, $2, $3) RETURNING *", [watchlistId, serieAnimeId, statut || 1]);
 
     res.status(201).json({
       message: "Série/animé ajouté à la watchlist avec succès",
@@ -227,6 +235,52 @@ export const removeFromWatchlist = async (req: Request, res: Response): Promise<
     await client.query("DELETE FROM watchlist_items WHERE watchlist_id = $1 AND serie_anime_id = $2", [watchlistId, serieAnimeId]);
 
     res.status(200).json({ message: "Série/animé retiré de la watchlist avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la série/animé :", error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+// Supprimer une watchlist
+export const deleteWatchlist = async (req: Request, res: Response): Promise<void> => {
+  const watchlistId = Number(req.params.watchlistId);
+  const forceDelete = req.params.forceDelete === "true";
+
+  if (!watchlistId) {
+    res.status(400).json({ message: "L'id de la watchlist à supprimer est obligatoire." });
+    return;
+  }
+
+  try {
+    // Vérifier si la watchlist existe
+    const watchlistCheck = await client.query("SELECT * FROM watchlists WHERE id = $1", [watchlistId]);
+
+    if (watchlistCheck.rowCount === 0) {
+      res.status(404).json({ message: "Watchlist non trouvée" });
+      return;
+    }
+
+    // Si forceDelete n'est pas true, vérifier si la watchlist contient des éléments
+    if (forceDelete !== true) {
+      const itemsCheck = await client.query("SELECT COUNT(*) FROM watchlist_items WHERE watchlist_id = $1", [watchlistId]);
+
+      if (parseInt(itemsCheck.rows[0].count) > 0) {
+        res.status(400).json({
+          message: "La watchlist contient des éléments. Utilisez forceDelete=true pour supprimer la watchlist et tous ses éléments.",
+          hasItems: true,
+          itemCount: parseInt(itemsCheck.rows[0].count),
+        });
+        return;
+      }
+    }
+
+    // Supprimer d'abord les éléments de la watchlist si nécessaire
+    await client.query("DELETE FROM watchlist_items WHERE watchlist_id = $1", [watchlistId]);
+
+    // Supprimer la watchlist
+    await client.query("DELETE FROM watchlists WHERE id = $1", [watchlistId]);
+
+    res.status(200).json({ message: "Watchlist supprimée avec succès." });
   } catch (error) {
     console.error("Erreur lors de la suppression de la watchlist :", error);
     res.status(500).json({ message: "Erreur serveur" });

@@ -1,32 +1,25 @@
 import { Router } from "express";
-import { getTopSeries, getWatchlist } from "../controllers/watchlist.controller";
+import { deleteWatchlist, getTopSeries, getWatchlist } from "../controllers/watchlist.controller";
 import { getAllWatchlists } from "../controllers/watchlist.controller";
 import { getSeriesInWatchlist, updateStatus, removeFromWatchlist, createWatchlist, addToWatchlist } from "../controllers/watchlist.controller";
 
 const router = Router();
 
-// Route pour récupérer les séries et animés dans une watchlist spécifique
-router.get("/:id", getWatchlist);
+// GET
+router.get("/:id", getWatchlist); // Récupère les séries et animés dans une watchlist spécifique
+router.get("/user/:userId", getAllWatchlists); // Récupère toutes les watchlists d'un utilisateur
+router.get("/:watchlistId/series", getSeriesInWatchlist); // Récupère les séries dans une watchlist
+router.get("/series/top", getTopSeries); // Récupère le TOP 5 des plus ajoutés en watchlist
 
-// Route pour récupérer toutes les watchlists d'un utilisateur
-router.get("/user/:userId", getAllWatchlists);
+// PATCH
+router.patch("/statut/:watchlistId/:serieAnimeId", updateStatus); // Change le statut d'un animé/série dans la watchlist
 
-// Route pour récupérer les séries dans une watchlist
-router.get("/:watchlistId/series", getSeriesInWatchlist);
+// POST
+router.post("/creer", createWatchlist); // Crée une nouvelle watchlist
+router.post("/ajouter/:watchlistId/:serieAnimeId", addToWatchlist); // Ajoute une série/animé à une watchlist
 
-// Route pour Récupérer le TOP 5 des plus ajoutés en watchlist
-router.get("/series/top", getTopSeries);
-
-// Route PATCH pour changer le statut d'un animé/série dans la watchlist
-router.patch("/statut/:watchlistId/:serieAnimeId", updateStatus);
-
-// Route pour supprimer un animé/série dans la watchlist
-router.delete("/supprimer/:watchlistId/:serieAnimeId", removeFromWatchlist);
-
-// Route pour créer une nouvelle watchlist
-router.post("/creer", createWatchlist);
-
-// Route pour ajouter une série/animé à une watchlist
-router.post("/ajouter/:watchlistId/:serieAnimeId", addToWatchlist);
+// DELETE
+router.delete("/supprimer/:watchlistId/:serieAnimeId", removeFromWatchlist); // Supprime un animé/série dans la watchlist
+router.delete("/supprimer/:watchlistId", deleteWatchlist); // Supprime une watchlist
 
 export default router;
