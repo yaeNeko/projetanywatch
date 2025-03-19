@@ -27,3 +27,42 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 		next();
 	});
 };
+
+// Middleware pour vérifier si l'utilisateur est propriétaire de la watchlist
+export const isWatchlistOwner = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	try {
+		const userId = req.user?.id;
+		const watchlistId = req.params.watchlistId || req.params.id;
+
+		if (!userId) {
+			res.status(403).json({ message: "Utilisateur non authentifié" });
+			return;
+		}
+
+		if (!watchlistId) {
+			res.status(400).json({ message: "ID de watchlist non fourni" });
+			return;
+		}
+
+		// Importer client depuis la config de DB
+		const client = require("../config/db").default;
+		
+		// Vérifier si l'utilisateur est propriétaire de la watchlist
+		const result = await client.query(
+			"SELECT * FROM watchlists WHERE id = $1 AND utilisateur_id = $2",
+			[watchlistId, userId]
+		);
+
+		if (result.rowCount === 0) {
+			res.status(403).json({ 
+				message: "Accès refusé : vous n'êtes pas propriétaire de cette watchlist" 
+			});
+			return;
+		}
+
+		next();
+	} catch (error) {
+		console.error("Erreur de vérification de propriété de watchlist:", error);
+		res.status(500).json({ message: "Erreur serveur" });
+	}
+};
