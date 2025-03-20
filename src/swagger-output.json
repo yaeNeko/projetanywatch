@@ -13,7 +13,7 @@
   "paths": {
     "/register": {
       "post": {
-        "description": "Enregistre un nouvel utilisateur dans l'application.",
+        "description": "",
         "parameters": [
           {
             "name": "body",
@@ -22,16 +22,13 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "type": "string",
                   "example": "any"
                 },
                 "email": {
-                  "type": "string",
-                  "example": "any@domain.com"
+                  "example": "any"
                 },
                 "password": {
-                  "type": "string",
-                  "example": "password123"
+                  "example": "any"
                 }
               }
             }
@@ -39,40 +36,20 @@
         ],
         "responses": {
           "201": {
-            "description": "Utilisateur créé avec succès.",
-            "examples": {
-              "application/json": {
-                "message": "Utilisateur créé avec succès.",
-                "user": {
-                  "id": "123",
-                  "pseudo": "any",
-                  "email": "any@domain.com"
-                }
-              }
-            }
+            "description": "Created"
           },
           "400": {
-            "description": "Requête incorrecte, champ manquant ou utilisateur déjà existant.",
-            "examples": {
-              "application/json": {
-                "error": "Tous les champs sont obligatoires."
-              }
-            }
+            "description": "Bad Request"
           },
           "500": {
-            "description": "Erreur serveur interne.",
-            "examples": {
-              "application/json": {
-                "error": "Erreur lors de l’inscription. Veuillez réessayer."
-              }
-            }
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/login": {
       "post": {
-        "description": "Permet à un utilisateur de se connecter et d'obtenir un token JWT.",
+        "description": "",
         "parameters": [
           {
             "name": "body",
@@ -81,12 +58,10 @@
               "type": "object",
               "properties": {
                 "email": {
-                  "type": "string",
-                  "example": "any@domain.com"
+                  "example": "any"
                 },
                 "password": {
-                  "type": "string",
-                  "example": "password123"
+                  "example": "any"
                 }
               }
             }
@@ -94,41 +69,25 @@
         ],
         "responses": {
           "200": {
-            "description": "Connexion réussie, token JWT généré.",
-            "examples": {
-              "application/json": {
-                "token": "jwt.token.here"
-              }
-            }
+            "description": "OK"
           },
           "400": {
-            "description": "Email ou mot de passe incorrect.",
-            "examples": {
-              "application/json": {
-                "error": "Email ou mot de passe incorrect."
-              }
-            }
+            "description": "Bad Request"
           },
           "500": {
-            "description": "Erreur serveur interne.",
-            "examples": {
-              "application/json": {
-                "error": "Erreur lors de la connexion."
-              }
-            }
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/": {
       "post": {
-        "description": "Permet de soumettre une série/anime avec une note et un commentaire.",
+        "description": "",
         "parameters": [
           {
             "name": "authorization",
             "in": "header",
-            "type": "string",
-            "description": "Token d'authentification."
+            "type": "string"
           },
           {
             "name": "body",
@@ -137,24 +96,19 @@
               "type": "object",
               "properties": {
                 "serie_anime_id": {
-                  "type": "string",
-                  "example": "123"
+                  "example": "any"
                 },
                 "note": {
-                  "type": "integer",
-                  "example": 4
+                  "example": "any"
                 },
                 "commentaire": {
-                  "type": "string",
-                  "example": "Très bon anime!"
+                  "example": "any"
                 },
                 "pseudo_anonyme": {
-                  "type": "string",
-                  "example": "user123"
+                  "example": "any"
                 },
                 "type": {
-                  "type": "string",
-                  "example": "anime"
+                  "example": "any"
                 }
               }
             }
@@ -162,115 +116,65 @@
         ],
         "responses": {
           "201": {
-            "description": "Création réussie.",
-            "examples": {
-              "application/json": {
-                "message": "Série/anime ajouté avec succès."
-              }
-            }
+            "description": "Created"
           },
           "400": {
-            "description": "Requête incorrecte.",
-            "examples": {
-              "application/json": {
-                "error": "Erreur de validation des données."
-              }
-            }
+            "description": "Bad Request"
           },
           "401": {
-            "description": "Non autorisé.",
-            "examples": {
-              "application/json": {
-                "error": "Token d'authentification manquant ou invalide."
-              }
-            }
+            "description": "Unauthorized"
           },
           "403": {
-            "description": "Interdit.",
-            "examples": {
-              "application/json": {
-                "error": "Action interdite."
-              }
-            }
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Non trouvé.",
-            "examples": {
-              "application/json": {
-                "error": "Série non trouvée."
-              }
-            }
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne.",
-            "examples": {
-              "application/json": {
-                "error": "Erreur lors de la soumission de la série."
-              }
-            }
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/{serie_anime_id}": {
       "get": {
-        "description": "Récupère les détails d'une série/anime selon son ID.",
+        "description": "",
         "parameters": [
           {
             "name": "serie_anime_id",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de la série/anime."
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "examples": {
-              "application/json": {
-                "id": "123",
-                "title": "Naruto",
-                "genre": "Action"
-              }
-            }
+            "description": "OK"
           },
           "404": {
-            "description": "Non trouvé.",
-            "examples": {
-              "application/json": {
-                "error": "Série/Anime non trouvé."
-              }
-            }
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne.",
-            "examples": {
-              "application/json": {
-                "error": "Erreur lors de la récupération de la série."
-              }
-            }
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/{utilisateur_id}/{serie_anime_id}": {
       "patch": {
-        "description": "Met à jour les notes et commentaires d'un utilisateur sur une série/anime.",
+        "description": "",
         "parameters": [
           {
             "name": "utilisateur_id",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de l'utilisateur."
+            "type": "string"
           },
           {
             "name": "serie_anime_id",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de la série/anime."
+            "type": "string"
           },
           {
             "name": "body",
@@ -279,12 +183,10 @@
               "type": "object",
               "properties": {
                 "note": {
-                  "type": "integer",
-                  "example": 5
+                  "example": "any"
                 },
                 "commentaire": {
-                  "type": "string",
-                  "example": "Super anime!"
+                  "example": "any"
                 }
               }
             }
@@ -292,137 +194,80 @@
         ],
         "responses": {
           "200": {
-            "description": "Mise à jour réussie.",
-            "examples": {
-              "application/json": {
-                "message": "Avis mis à jour."
-              }
-            }
+            "description": "OK"
           },
           "403": {
-            "description": "Interdit.",
-            "examples": {
-              "application/json": {
-                "error": "Action interdite."
-              }
-            }
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Non trouvé.",
-            "examples": {
-              "application/json": {
-                "error": "Utilisateur ou série non trouvé."
-              }
-            }
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne.",
-            "examples": {
-              "application/json": {
-                "error": "Erreur lors de la mise à jour de l'avis."
-              }
-            }
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/subscriptions": {
       "get": {
-        "description": "Récupère toutes les abonnements d'un utilisateur.",
+        "description": "",
         "responses": {
           "200": {
-            "description": "OK",
-            "examples": {
-              "application/json": [
-                {
-                  "serie_id": "123",
-                  "title": "Naruto"
-                },
-                {
-                  "serie_id": "124",
-                  "title": "One Piece"
-                }
-              ]
-            }
+            "description": "OK"
           },
           "404": {
-            "description": "Non trouvé.",
-            "examples": {
-              "application/json": {
-                "error": "Abonnements non trouvés."
-              }
-            }
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne.",
-            "examples": {
-              "application/json": {
-                "error": "Erreur lors de la récupération des abonnements."
-              }
-            }
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/{id}": {
       "get": {
-        "description": "Récupère les détails d'un utilisateur ou d'une ressource spécifique selon son ID.",
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de la ressource."
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "examples": {
-              "application/json": {
-                "id": "123",
-                "pseudo": "user1"
-              }
-            }
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "403": {
-            "description": "Interdit.",
-            "examples": {
-              "application/json": {
-                "error": "Action interdite."
-              }
-            }
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Non trouvé.",
-            "examples": {
-              "application/json": {
-                "error": "Ressource non trouvée."
-              }
-            }
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne.",
-            "examples": {
-              "application/json": {
-                "error": "Erreur lors de la récupération des données."
-              }
-            }
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/visibility/{id}": {
       "patch": {
-        "description": "Modifie la visibilité d'un utilisateur ou d'une ressource.",
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de la ressource."
+            "type": "string"
           },
           {
             "name": "body",
@@ -431,8 +276,7 @@
               "type": "object",
               "properties": {
                 "est_public": {
-                  "type": "boolean",
-                  "example": true
+                  "example": "any"
                 }
               }
             }
@@ -440,42 +284,26 @@
         ],
         "responses": {
           "200": {
-            "description": "Visibilité modifiée.",
-            "examples": {
-              "application/json": {
-                "message": "Visibilité mise à jour."
-              }
-            }
+            "description": "OK"
           },
           "404": {
-            "description": "Non trouvé.",
-            "examples": {
-              "application/json": {
-                "error": "Utilisateur ou ressource non trouvée."
-              }
-            }
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne.",
-            "examples": {
-              "application/json": {
-                "error": "Erreur lors de la modification de la visibilité."
-              }
-            }
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/modification/{id}": {
       "put": {
-        "description": "Permet de modifier les informations d'un utilisateur.",
+        "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de l'utilisateur à modifier."
+            "type": "string"
           },
           {
             "name": "body",
@@ -484,16 +312,13 @@
               "type": "object",
               "properties": {
                 "pseudo": {
-                  "type": "string",
                   "example": "any"
                 },
                 "email": {
-                  "type": "string",
-                  "example": "any@domain.com"
+                  "example": "any"
                 },
                 "mot_de_passe": {
-                  "type": "string",
-                  "example": "newpassword123"
+                  "example": "any"
                 }
               }
             }
@@ -501,156 +326,205 @@
         ],
         "responses": {
           "200": {
-            "description": "Utilisateur mis à jour avec succès."
+            "description": "OK"
           },
           "404": {
-            "description": "Utilisateur non trouvé."
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne."
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/supprimer/{userId}": {
       "delete": {
-        "description": "Supprime un utilisateur de la base de données.",
+        "description": "",
         "parameters": [
           {
             "name": "userId",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de l'utilisateur à supprimer."
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "Utilisateur supprimé avec succès."
+            "description": "OK"
           },
           "404": {
-            "description": "Utilisateur non trouvé."
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne."
-          }
-        }
-      }
-    },
-    "/user/{userId}": {
-      "get": {
-        "description": "Récupère les informations d'un utilisateur selon son ID.",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "ID de l'utilisateur."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Informations de l'utilisateur récupérées avec succès.",
-            "examples": {
-              "application/json": {
-                "id": "123",
-                "pseudo": "any",
-                "email": "any@domain.com"
-              }
-            }
-          },
-          "404": {
-            "description": "Utilisateur non trouvé."
-          },
-          "500": {
-            "description": "Erreur serveur interne."
-          }
-        }
-      }
-    },
-    "/{watchlistId}/series": {
-      "get": {
-        "description": "Récupère toutes les séries dans une watchlist spécifique.",
-        "parameters": [
-          {
-            "name": "watchlistId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "description": "ID de la watchlist."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Séries récupérées avec succès.",
-            "examples": {
-              "application/json": [
-                {
-                  "id": "123",
-                  "title": "Naruto"
-                },
-                {
-                  "id": "124",
-                  "title": "One Piece"
-                }
-              ]
-            }
-          },
-          "404": {
-            "description": "Watchlist non trouvée."
-          },
-          "500": {
-            "description": "Erreur serveur interne."
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/series/top": {
       "get": {
-        "description": "Récupère les séries les mieux notées.",
+        "description": "",
         "responses": {
           "200": {
-            "description": "Séries récupérées avec succès.",
-            "examples": {
-              "application/json": [
-                {
-                  "id": "123",
-                  "title": "Naruto"
-                },
-                {
-                  "id": "124",
-                  "title": "One Piece"
-                }
-              ]
-            }
+            "description": "OK"
           },
           "404": {
-            "description": "Aucune série trouvée."
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne."
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/{userId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/{watchlistId}/series": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "watchlistId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/creer": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/ajouter/{watchlistId}/{serieAnimeId}": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "watchlistId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "serieAnimeId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/statut/{watchlistId}/{serieAnimeId}": {
       "patch": {
-        "description": "Modifie le statut d'une série dans une watchlist.",
+        "description": "",
         "parameters": [
           {
             "name": "watchlistId",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de la watchlist."
+            "type": "string"
           },
           {
             "name": "serieAnimeId",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de la série/anime."
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           },
           {
             "name": "body",
@@ -659,8 +533,7 @@
               "type": "object",
               "properties": {
                 "statut": {
-                  "type": "string",
-                  "example": "en cours"
+                  "example": "any"
                 }
               }
             }
@@ -668,48 +541,98 @@
         ],
         "responses": {
           "200": {
-            "description": "Statut mis à jour avec succès."
+            "description": "OK"
           },
           "400": {
-            "description": "Requête incorrecte."
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Watchlist ou série non trouvée."
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne."
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/supprimer/{watchlistId}/{serieAnimeId}": {
       "delete": {
-        "description": "Supprime une série d'une watchlist.",
+        "description": "",
         "parameters": [
           {
             "name": "watchlistId",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de la watchlist."
+            "type": "string"
           },
           {
             "name": "serieAnimeId",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID de la série/anime."
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/supprimer/{watchlistId}": {
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "watchlistId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
           "200": {
-            "description": "Série supprimée avec succès de la watchlist."
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "404": {
-            "description": "Watchlist ou série non trouvée."
+            "description": "Not Found"
           },
           "500": {
-            "description": "Erreur serveur interne."
+            "description": "Internal Server Error"
           }
         }
       }
