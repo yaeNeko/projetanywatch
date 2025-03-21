@@ -1,16 +1,10 @@
-import { Pool, QueryResult, QueryError } from "pg";
+const { Client } = require("pg");
 
-const pool = new Pool({
+const client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false, // Désactive la vérification SSL
+    rejectUnauthorized: false, // Pour accepter les certificats auto-signés (non recommandé pour production)
   },
 });
 
-pool.query("SELECT NOW()", (err: QueryError, res: QueryResult) => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log(res.rows);
-  }
-});
+client.connect();
