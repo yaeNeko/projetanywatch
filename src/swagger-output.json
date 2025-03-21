@@ -22,7 +22,7 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "example": "john_doe"
+                  "example": "john"
                 },
                 "email": {
                   "example": "john@example.com"
