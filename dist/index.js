@@ -25,6 +25,8 @@ const swagger_output_json_1 = __importDefault(require("./swagger-output.json"));
 const subscription_routes_1 = __importDefault(require("./routes/subscription.routes"));
 const port = process.env.PORT || 4000;
 const app = (0, express_1.default)();
+const client = require("./db");
+
 app.use(express_1.default.json());
 // Route pour la documentation Swagger
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_output_json_1.default));
@@ -51,3 +53,11 @@ app.listen(port, () => {
     console.log(`URL de l'API: http://localhost:${port}`);
 });
 dotenv.config();
+
+client.query("SELECT NOW()", (err, res) => {
+    if (err) {
+      console.error("Erreur lors de l'exécution de la requête", err);
+    } else {
+      console.log("Résultat de la requête :", res.rows[0]);
+    }
+  });
