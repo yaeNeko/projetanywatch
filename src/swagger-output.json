@@ -11,7 +11,7 @@
     "http"
   ],
   "paths": {
-    "/register": {
+    "/api/auth/register": {
       "post": {
         "description": "Inscription d'un nouvel utilisateur avec un nom d'utilisateur, un email et un mot de passe.",
         "parameters": [
@@ -47,7 +47,7 @@
         }
       }
     },
-    "/login": {
+    "/api/auth/login": {
       "post": {
         "description": "Authentification d'un utilisateur avec un email et un mot de passe pour obtenir un token JWT.",
         "parameters": [
@@ -80,9 +80,9 @@
         }
       }
     },
-    "/": {
+    "/api/reviews": {
       "post": {
-        "description": "Ajouter un commentaire ou une note pour un anime dans la base de données.",
+        "description": "Ajouter un commentaire ou une note pour une série ou un anime dans la base de données.",
         "parameters": [
           {
             "name": "authorization",
@@ -128,7 +128,7 @@
             "description": "Accès interdit"
           },
           "404": {
-            "description": "Anime non trouvé"
+            "description": "Série/Anime non trouvé"
           },
           "500": {
             "description": "Erreur interne du serveur"
@@ -136,9 +136,9 @@
         }
       }
     },
-    "/{serie_anime_id}": {
+    "/api/reviews/{serie_anime_id}": {
       "get": {
-        "description": "Obtenir les détails d'un anime à partir de son ID.",
+        "description": "Obtenir les avis d'une série/anime à partir de son ID.",
         "parameters": [
           {
             "name": "serie_anime_id",
@@ -149,10 +149,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Détails de l'anime récupérés avec succès"
+            "description": "Avis de la série ou de l'anime récupérés avec succès"
           },
           "404": {
-            "description": "Anime non trouvé"
+            "description": "Série/Anime non trouvé"
           },
           "500": {
             "description": "Erreur interne du serveur"
@@ -160,7 +160,7 @@
         }
       }
     },
-    "/{utilisateur_id}/{serie_anime_id}": {
+    "/api/reviews/{utilisateur_id}/{serie_anime_id}": {
       "patch": {
         "description": "Mettre à jour la note et le commentaire d'un utilisateur pour une série/animé donné.",
         "parameters": [
@@ -200,7 +200,7 @@
             "description": "Accès interdit"
           },
           "404": {
-            "description": "Anime ou utilisateur non trouvé"
+            "description": "Série/Anime ou utilisateur non trouvé"
           },
           "500": {
             "description": "Erreur interne du serveur"
@@ -208,7 +208,7 @@
         }
       }
     },
-    "/subscriptions": {
+    "/api/subscriptions": {
       "get": {
         "description": "Obtenir la liste des abonnements de l'utilisateur.",
         "responses": {
@@ -224,7 +224,7 @@
         }
       }
     },
-    "/{id}": {
+    "/api/users/{id}": {
       "get": {
         "description": "Obtenir les informations d'un utilisateur à partir de son ID.",
         "parameters": [
@@ -259,7 +259,7 @@
         }
       }
     },
-    "/visibility/{id}": {
+    "/api/users/visibility/{id}": {
       "patch": {
         "description": "Mettre à jour la visibilité d'un utilisateur.",
         "parameters": [
@@ -295,7 +295,7 @@
         }
       }
     },
-    "/modification/{id}": {
+    "/api/users/modification/{id}": {
       "put": {
         "description": "Modifier les informations d'un utilisateur, y compris le pseudo, l'email et le mot de passe.",
         "parameters": [
@@ -337,7 +337,7 @@
         }
       }
     },
-    "/supprimer/{userId}": {
+    "/api/users/supprimer/{userId}": {
       "delete": {
         "description": "Supprimer un utilisateur à partir de son ID.",
         "parameters": [
@@ -361,15 +361,15 @@
         }
       }
     },
-    "/series/top": {
+    "/api/watchlist/series/top": {
       "get": {
-        "description": "Obtenir la liste des séries animées les mieux notées.",
+        "description": "Obtenir la liste des séries/animés les mieux notées.",
         "responses": {
           "200": {
-            "description": "Liste des séries animées obtenue avec succès"
+            "description": "Liste des séries/animés obtenue avec succès"
           },
           "404": {
-            "description": "Aucune série animée trouvée"
+            "description": "Aucune série/animé trouvée"
           },
           "500": {
             "description": "Erreur interne du serveur"
@@ -377,9 +377,9 @@
         }
       }
     },
-    "/user/{userId}": {
+    "/api/watchlist/user/{userId}": {
       "get": {
-        "description": "Obtenir les informations d'un utilisateur spécifique.",
+        "description": "Obtenir les watchlists d'un utilisateur spécifique.",
         "parameters": [
           {
             "name": "userId",
@@ -395,7 +395,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Informations de l'utilisateur récupérées avec succès"
+            "description": "Watchlists de l'utilisateur récupérées avec succès"
           },
           "401": {
             "description": "Utilisateur non authentifié"
@@ -412,9 +412,9 @@
         }
       }
     },
-    "/{watchlistId}/series": {
+    "/api/watchlist/{watchlistId}/series": {
       "get": {
-        "description": "Obtenir la liste des séries animées dans la watchlist d'un utilisateur.",
+        "description": "Obtenir la liste des séries/animés dans la watchlist d'un utilisateur.",
         "parameters": [
           {
             "name": "watchlistId",
@@ -430,7 +430,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Liste des séries animées de la watchlist obtenue avec succès"
+            "description": "Liste des séries/animés de la watchlist obtenue avec succès"
           },
           "401": {
             "description": "Utilisateur non authentifié"
@@ -447,7 +447,7 @@
         }
       }
     },
-    "/creer": {
+    "/api/watchlist/creer": {
       "post": {
         "description": "Créer une nouvelle watchlist pour l'utilisateur authentifié.",
         "parameters": [
@@ -471,23 +471,23 @@
         }
       }
     },
-    "/ajouter/{watchlistId}/{serieAnimeId}": {
+    "/api/watchlist/ajouter/{watchlistId}/{serieAnimeId}": {
       "post": {
-        "description": "Ajouter un anime à la watchlist d'un utilisateur.",
+        "description": "Ajouter une série/anime à la watchlist d'un utilisateur.",
         "parameters": [
           {
             "name": "watchlistId",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "L'ID de la watchlist à laquelle ajouter l'anime"
+            "description": "L'ID de la watchlist à laquelle ajouter la série/anime"
           },
           {
             "name": "serieAnimeId",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "L'ID de l'anime à ajouter à la watchlist"
+            "description": "L'ID de la série/anime à ajouter à la watchlist"
           },
           {
             "name": "authorization",
@@ -498,7 +498,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Anime ajouté à la watchlist avec succès"
+            "description": "Série/Anime ajouté à la watchlist avec succès"
           },
           "400": {
             "description": "Requête incorrecte, paramètre manquant ou invalide"
@@ -515,23 +515,23 @@
         }
       }
     },
-    "/statut/{watchlistId}/{serieAnimeId}": {
+    "/api/watchlist/statut/{watchlistId}/{serieAnimeId}": {
       "patch": {
-        "description": "Mettre à jour le statut d'un anime dans une watchlist.",
+        "description": "Mettre à jour le statut d'une série/anime dans une watchlist.",
         "parameters": [
           {
             "name": "watchlistId",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "L'ID de la watchlist contenant l'anime"
+            "description": "L'ID de la watchlist contenant la série/anime"
           },
           {
             "name": "serieAnimeId",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "L'ID de l'anime dont le statut doit être mis à jour"
+            "description": "L'ID de la série/anime dont le statut doit être mis à jour"
           },
           {
             "name": "authorization",
@@ -547,7 +547,7 @@
               "properties": {
                 "statut": {
                   "example": "1",
-                  "description": "Statut de l'anime dans la watchlist (1:Pas commencé, 2:En cours, 3:En pause, 4:Terminé, 5:Abandonné, 6:En attente de nouveaux épisodes)"
+                  "description": "Statut de la série/anime dans la watchlist (1:Pas commencé, 2:En cours, 3:En pause, 4:Terminé, 5:Abandonné, 6:En attente de nouveaux épisodes)"
                 }
               }
             }
@@ -567,7 +567,7 @@
             "description": "Accès interdit, l'utilisateur ne dispose pas des droits nécessaires"
           },
           "404": {
-            "description": "Watchlist ou anime non trouvé"
+            "description": "Watchlist ou série/anime non trouvé"
           },
           "500": {
             "description": "Erreur interne du serveur"
@@ -575,23 +575,23 @@
         }
       }
     },
-    "/supprimer/{watchlistId}/{serieAnimeId}": {
+    "/api/watchlist/supprimer/{watchlistId}/{serieAnimeId}": {
       "delete": {
-        "description": "Supprimer un anime d'une watchlist.",
+        "description": "Supprimer une série/anime d'une watchlist.",
         "parameters": [
           {
             "name": "watchlistId",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "L'ID de la watchlist dont l'anime doit être supprimé"
+            "description": "L'ID de la watchlist dont la série/anime doit être supprimé"
           },
           {
             "name": "serieAnimeId",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "L'ID de l'anime à supprimer"
+            "description": "L'ID de la série/anime à supprimer"
           },
           {
             "name": "authorization",
@@ -602,7 +602,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Anime supprimé de la watchlist avec succès"
+            "description": "Série/Anime supprimé de la watchlist avec succès"
           },
           "400": {
             "description": "Requête incorrecte, paramètre manquant ou invalide"
@@ -619,7 +619,7 @@
         }
       }
     },
-    "/supprimer/{watchlistId}": {
+    "/api/watchlist/supprimer/{watchlistId}": {
       "delete": {
         "description": "Supprimer une watchlist entière.",
         "parameters": [
