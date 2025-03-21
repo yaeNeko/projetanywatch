@@ -1,79 +1,80 @@
-import jsonwebtoken from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import { config } from '../config/env';
-import db from '../config/db';
-
-const JWT_SECRET = config.jwtSecret;
-
-// Vérifier que JWT_SECRET est bien défini
-if (!JWT_SECRET) {
-  throw new Error('La variable d\'environnement JWT_SECRET n\'est pas définie');
-}
-
-export const signup = async (req, res, next) => {
-  try {
-    const { username, email, password } = req.body;
-
-    // Vérification que tous les champs sont renseignés
-    if (username.trim().length === 0 || email.trim().length === 0 || password.trim().length === 0) {
-      return res.status(400).json({ error: "Tous les champs sont obligatoires." });
-    }
-
-    // Vérification de la force du mot de passe (facultatif)
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      return res.status(400).json({ error: "Le mot de passe doit contenir au moins 8 caractères, incluant des lettres et des chiffres." });
-    }
-
-    // Vérifier si l'utilisateur existe déjà
-    const existingUser = await db.query("SELECT * FROM utilisateurs WHERE email = $1", [email]);
-    if (existingUser.rowCount > 0) {
-      return res.status(400).json({ error: "Cet utilisateur existe déjà." });
-    }
-
-    // Hash du mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Insertion de l'utilisateur dans la base
-    const result = await db.query("INSERT INTO utilisateurs (pseudo, email, mot_de_passe) VALUES ($1, $2, $3) RETURNING id, pseudo, email", [username, email, hashedPassword]);
-    const newUser = result.rows[0];
-
-    res.status(201).json({ message: "Utilisateur créé avec succès.", user: newUser });
-  } catch (error) {
-    console.error("Erreur lors de l'inscription :", error);
-    res.status(500).json({ error: "Erreur lors de l’inscription. Veuillez réessayer." });
-  }
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
-
-export const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-
-    // Vérifier que les champs sont renseignés
-    if (email.trim().length === 0 || password.trim().length === 0) {
-      return res.status(400).json({ error: "Tous les champs sont obligatoires." });
-    }
-
-    // Récupérer l'utilisateur depuis la base de données
-    const result = await db.query("SELECT * FROM utilisateurs WHERE email = $1", [email]);
-    if (result.rowCount === 0) {
-      return res.status(400).json({ error: "Email ou mot de passe incorrect." });
-    }
-
-    const user = result.rows[0];
-
-    // Vérification du mot de passe
-    const isPasswordValid = await bcrypt.compare(password, user.mot_de_passe);
-    if (!isPasswordValid) {
-      return res.status(400).json({ error: "Email ou mot de passe incorrect." });
-    }
-
-    // Génération du token JWT
-    const token = jsonwebtoken.sign({ id: user.id, email: user.email, username: user.pseudo }, JWT_SECRET, { expiresIn: '1h' });
-
-    res.json({ token });
-  } catch (error) {
-    console.error("Erreur lors de la connexion :", error);
-    res.status(500).json({ error: "Erreur lors de la connexion. Veuillez réessayer plus tard." });
-  }
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.login = exports.signup = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const env_1 = require("../config/env");
+const db_1 = __importDefault(require("../config/db"));
+const JWT_SECRET = env_1.config.jwtSecret;
+const signup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { username, email, password } = req.body;
+        // Vérification que tous les champs sont renseignés
+        if (username.trim().length === 0 || email.trim().length === 0 || password.trim().length === 0) {
+            res.status(400).json({ error: "Tous les champs sont obligatoires." });
+            return;
+        }
+        // Vérifier si l'utilisateur existe déjà dans la base de données
+        const existingUser = yield db_1.default.query("SELECT * FROM utilisateurs WHERE email = $1", [email]);
+        if (existingUser.rowCount && existingUser.rowCount > 0) {
+            res.status(400).json({ error: "Cet utilisateur existe déjà." });
+            return;
+        }
+        // Hash du mot de passe
+        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        // Insertion de l'utilisateur dans la base et récupération de ses infos
+        const result = yield db_1.default.query("INSERT INTO utilisateurs (pseudo, email, mot_de_passe) VALUES ($1, $2, $3) RETURNING id, pseudo, email", [username, email, hashedPassword]);
+        const newUser = result.rows[0];
+        res.status(201).json({ message: "Utilisateur créé avec succès.", user: newUser });
+    }
+    catch (error) {
+        console.error("Erreur lors de l'inscription :", error);
+        res.status(500).json({ error: "Erreur lors de l’inscription. Veuillez réessayer." });
+    }
+});
+exports.signup = signup;
+const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { email, password } = req.body;
+        // Vérifier que les champs sont renseignés
+        if (email.trim().length === 0 || password.trim().length === 0) {
+            res.status(400).json({ error: "Tous les champs sont obligatoires." });
+            return;
+        }
+        // Récupération de l'utilisateur depuis la base de données
+        const result = yield db_1.default.query("SELECT * FROM utilisateurs WHERE email = $1", [email]);
+        if (result.rowCount === 0) {
+            res.status(400).json({ error: "Email ou mot de passe incorrect." });
+            return;
+        }
+        const user = result.rows[0];
+        // Vérification du mot de passe
+        const isPasswordValid = yield bcrypt_1.default.compare(password, user.mot_de_passe);
+        if (!isPasswordValid) {
+            res.status(400).json({ error: "Email ou mot de passe incorrect." });
+            return;
+        }
+        // Génération du token JWT
+        const token = jsonwebtoken_1.default.sign({ id: user.id, email: user.email }, JWT_SECRET, {
+            expiresIn: "1h",
+        });
+        res.json({ token });
+    }
+    catch (error) {
+        console.error("Erreur lors de la connexion :", error);
+        res.status(500).json({ error: "Erreur lors de la connexion." });
+    }
+});
+exports.login = login;
