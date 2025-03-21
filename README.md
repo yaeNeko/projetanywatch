@@ -38,3 +38,9 @@
     ```bash
     npm run dev
     ```
+
+5. **Lancer les tests (Jest)**
+
+    ```bash
+    npm test
+    ```
