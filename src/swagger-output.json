@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Anywatch API",
-    "description": "API permettant la gestion des utilisateurs, des watchlists et des séries/animés.",
+    "description": "L'API Anywatch permet aux utilisateurs de gérer leurs watchlists (listes de séries et d'animés à suivre), ainsi que de laisser des avis et des notes sur les séries et animés qu'ils suivent. Elle propose également des fonctionnalités d'inscription, d'authentification, de gestion de profils, de visibilité des utilisateurs, et des offres d'abonnements pour les utilisateurs.",
     "version": "1.0.0"
   },
   "host": "localhost:4000",
@@ -10,9 +10,32 @@
   "schemes": [
     "http"
   ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentification des utilisateurs (inscription et connexion)"
+    },
+    {
+      "name": "User",
+      "description": "Gestion des utilisateurs"
+    },
+    {
+      "name": "Watchlist",
+      "description": "Gestion des watchlists"
+    },
+    {
+      "name": "Review",
+      "description": "Gestion des reviews"
+    },
+    {
+      "name": "Subscription",
+      "description": "Liste des abonnements"
+    }
+  ],
   "paths": {
     "/api/auth/register": {
       "post": {
+        "tags": ["Auth"],
         "description": "Inscription d'un nouvel utilisateur avec un nom d'utilisateur, un email et un mot de passe.",
         "parameters": [
           {
@@ -49,6 +72,7 @@
     },
     "/api/auth/login": {
       "post": {
+        "tags": ["Auth"],
         "description": "Authentification d'un utilisateur avec un email et un mot de passe pour obtenir un token JWT.",
         "parameters": [
           {
@@ -82,6 +106,7 @@
     },
     "/api/reviews": {
       "post": {
+        "tags": ["Review"],
         "description": "Ajouter un commentaire ou une note pour une série ou un anime dans la base de données.",
         "parameters": [
           {
@@ -138,6 +163,7 @@
     },
     "/api/reviews/{serie_anime_id}": {
       "get": {
+        "tags": ["Review"],
         "description": "Obtenir les avis d'une série/anime à partir de son ID.",
         "parameters": [
           {
@@ -162,6 +188,7 @@
     },
     "/api/reviews/{utilisateur_id}/{serie_anime_id}": {
       "patch": {
+        "tags": ["Review"],
         "description": "Mettre à jour la note et le commentaire d'un utilisateur pour une série/animé donné.",
         "parameters": [
           {
@@ -210,6 +237,7 @@
     },
     "/api/subscriptions": {
       "get": {
+        "tags": ["Subscription"],
         "description": "Obtenir la liste des abonnements de l'utilisateur.",
         "responses": {
           "200": {
@@ -226,6 +254,7 @@
     },
     "/api/users/{id}": {
       "get": {
+        "tags": ["User"],
         "description": "Obtenir les informations d'un utilisateur à partir de son ID.",
         "parameters": [
           {
@@ -261,6 +290,7 @@
     },
     "/api/users/visibility/{id}": {
       "patch": {
+        "tags": ["User"],
         "description": "Mettre à jour la visibilité d'un utilisateur.",
         "parameters": [
           {
@@ -297,6 +327,7 @@
     },
     "/api/users/modification/{id}": {
       "put": {
+        "tags": ["User"],
         "description": "Modifier les informations d'un utilisateur, y compris le pseudo, l'email et le mot de passe.",
         "parameters": [
           {
@@ -339,6 +370,7 @@
     },
     "/api/users/supprimer/{userId}": {
       "delete": {
+        "tags": ["User"],
         "description": "Supprimer un utilisateur à partir de son ID.",
         "parameters": [
           {
@@ -363,6 +395,7 @@
     },
     "/api/watchlist/series/top": {
       "get": {
+        "tags": ["Watchlist"],
         "description": "Obtenir la liste des séries/animés les mieux notées.",
         "responses": {
           "200": {
@@ -379,6 +412,7 @@
     },
     "/api/watchlist/user/{userId}": {
       "get": {
+        "tags": ["Watchlist"],
         "description": "Obtenir les watchlists d'un utilisateur spécifique.",
         "parameters": [
           {
@@ -414,6 +448,7 @@
     },
     "/api/watchlist/{watchlistId}/series": {
       "get": {
+        "tags": ["Watchlist"],
         "description": "Obtenir la liste des séries/animés dans la watchlist d'un utilisateur.",
         "parameters": [
           {
@@ -449,6 +484,7 @@
     },
     "/api/watchlist/creer": {
       "post": {
+        "tags": ["Watchlist"],
         "description": "Créer une nouvelle watchlist pour l'utilisateur authentifié.",
         "parameters": [
           {
@@ -488,6 +524,7 @@
     },
     "/api/watchlist/ajouter/{watchlistId}/{serieAnimeId}": {
       "post": {
+        "tags": ["Watchlist"],
         "description": "Ajouter une série/anime à la watchlist d'un utilisateur.",
         "parameters": [
           {
@@ -532,6 +569,7 @@
     },
     "/api/watchlist/statut/{watchlistId}/{serieAnimeId}": {
       "patch": {
+        "tags": ["Watchlist"],
         "description": "Mettre à jour le statut d'une série/anime dans une watchlist.",
         "parameters": [
           {
@@ -592,6 +630,7 @@
     },
     "/api/watchlist/supprimer/{watchlistId}/{serieAnimeId}": {
       "delete": {
+        "tags": ["Watchlist"],
         "description": "Supprimer une série/anime d'une watchlist.",
         "parameters": [
           {
@@ -636,6 +675,7 @@
     },
     "/api/watchlist/supprimer/{watchlistId}": {
       "delete": {
+        "tags": ["Watchlist"],
         "description": "Supprimer une watchlist entière.",
         "parameters": [
           {
