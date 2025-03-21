@@ -1,17 +1,16 @@
-import { Client } from "pg";
+import { Pool, QueryResult, QueryError } from "pg";
 
-const client = new Client({
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false,
+    rejectUnauthorized: false, // Désactive la vérification SSL
   },
 });
 
-client
-  .connect()
-  .then(() => {
-    console.log("Connexion réussie à la base de données !");
-  })
-  .catch((err: Error) => {
-    console.error("Erreur de connexion à la base de données :", err);
-  });
+pool.query("SELECT NOW()", (err: QueryError, res: QueryResult) => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log(res.rows);
+  }
+});
