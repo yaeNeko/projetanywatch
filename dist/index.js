@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -48,3 +50,4 @@ app.use("/api", subscription_routes_1.default);
 app.listen(port, () => {
     console.log(`URL de l'API: http://localhost:${port}`);
 });
+dotenv.config();
