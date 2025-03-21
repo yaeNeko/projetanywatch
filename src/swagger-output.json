@@ -22,7 +22,7 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "example": "john"
+                  "example": "john1"
                 },
                 "email": {
                   "example": "john@example.com"
@@ -133,7 +133,12 @@
           "500": {
             "description": "Erreur interne du serveur"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/reviews/{serie_anime_id}": {
@@ -256,7 +261,12 @@
           "500": {
             "description": "Erreur interne du serveur"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/users/visibility/{id}": {
@@ -409,7 +419,12 @@
           "500": {
             "description": "Erreur interne du serveur"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/watchlist/{watchlistId}/series": {
@@ -444,7 +459,12 @@
           "500": {
             "description": "Erreur interne du serveur"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/watchlist/creer": {
@@ -458,6 +478,30 @@
             "description": "Token d'authentification JWT de l'utilisateur"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "utilisateur_id": {
+                    "type": "string",
+                    "description": "ID de l'utilisateur (souvent récupéré depuis le token)"
+                  },
+                  "nom": {
+                    "type": "string",
+                    "description": "Nom de la nouvelle watchlist"
+                  }
+                },
+                "example": {
+                  "utilisateur_id": "5",
+                  "nom": "To watch"
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "Watchlist créée avec succès"
@@ -468,7 +512,12 @@
           "403": {
             "description": "Accès interdit, l'utilisateur ne dispose pas des droits nécessaires"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/watchlist/ajouter/{watchlistId}/{serieAnimeId}": {
@@ -512,7 +561,12 @@
           "500": {
             "description": "Erreur interne du serveur"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/watchlist/statut/{watchlistId}/{serieAnimeId}": {
@@ -572,7 +626,12 @@
           "500": {
             "description": "Erreur interne du serveur"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/watchlist/supprimer/{watchlistId}/{serieAnimeId}": {
@@ -616,7 +675,12 @@
           "500": {
             "description": "Erreur interne du serveur"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/api/watchlist/supprimer/{watchlistId}": {
@@ -656,7 +720,21 @@
           "500": {
             "description": "Erreur interne du serveur"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
   }

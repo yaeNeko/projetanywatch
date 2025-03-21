@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import client from "../config/db"; // Connexion à la base de données
-
+import bcrypt from "bcrypt";
 
 export const getUserProfile = async (
   req: Request,
@@ -104,9 +104,13 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
       updateQuery += ` email = $${index++},`;
       updateValues.push(email);
     }
+   
+    // Mise à jour du mot de passe (avec hashage)
+    let hashedPassword = null;
     if (mot_de_passe) {
+      hashedPassword = await bcrypt.hash(mot_de_passe, 10); // Hash du mot de passe
       updateQuery += ` mot_de_passe = $${index++},`;
-      updateValues.push(mot_de_passe);
+      updateValues.push(hashedPassword);
     }
 
     // Retirer la dernière virgule de la requête
