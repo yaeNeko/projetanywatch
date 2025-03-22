@@ -4,9 +4,7 @@ const swaggerAutogen = require('swagger-autogen')();
 const outputFile = './swagger-output.json';
 
 // Spécifier les fichiers de routes à scanner pour générer la documentation
-// Remarque : Utilise des chemins relatifs vers tes fichiers de routes
-const endpointsFiles = ['./routes/**/*.ts'];  // Si tu utilises TypeScript
-// const endpointsFiles = ['./routes/**/*.js']; // Si tu utilises JavaScript
+const endpointsFiles = ['./routes/**/*.ts'];  
 
 // Documentation de base pour Swagger
 const doc = {
@@ -15,7 +13,7 @@ const doc = {
     description: 'Documentation de l\'API Anywatch',
     version: '1.0.0',
   },
-  host: 'localhost:4000',  // Modifie selon ton hôte et ton port
+  host: 'localhost:4000',  
   schemes: ['http'],
 };
 

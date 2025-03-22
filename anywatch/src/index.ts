@@ -8,6 +8,7 @@ import swaggerSpec from "./swagger-output.json";
 import subscriptionRoutes from "./routes/subscription.routes";
 import { config } from "./config/env";
 import cors from "cors";
+import client from "./config/db"; // Assure-toi que le chemin est correct
 
 const port = process.env.PORT || 4000;
 
