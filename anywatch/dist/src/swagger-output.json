@@ -1,0 +1,718 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Anywatch API",
+        "description": "L'API Anywatch permet aux utilisateurs de gérer leurs watchlists (listes de séries et d'animés à suivre), ainsi que de laisser des avis et des notes sur les séries et animés qu'ils suivent. Elle propose également des fonctionnalités d'inscription, d'authentification, de gestion de profils, de visibilité des utilisateurs, et des offres d'abonnements pour les utilisateurs.",
+        "version": "1.0.0"
+    },
+    "host": "localhost:4000",
+    "basePath": "/",
+    "schemes": [
+        "http"
+    ],
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authentification des utilisateurs (inscription et connexion)"
+        },
+        {
+            "name": "User",
+            "description": "Gestion des utilisateurs"
+        },
+        {
+            "name": "Watchlist",
+            "description": "Gestion des watchlists"
+        },
+        {
+            "name": "Review",
+            "description": "Gestion des reviews"
+        },
+        {
+            "name": "Subscription",
+            "description": "Liste des abonnements"
+        }
+    ],
+    "paths": {
+        "/api/auth/register": {
+            "post": {
+                "tags": ["Auth"],
+                "description": "Inscription d'un nouvel utilisateur avec un nom d'utilisateur, un email et un mot de passe.",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "username": {
+                                    "example": "john1"
+                                },
+                                "email": {
+                                    "example": "john@example.com"
+                                },
+                                "password": {
+                                    "example": "password123"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Utilisateur créé avec succès"
+                    },
+                    "400": {
+                        "description": "Données manquantes ou utilisateur déjà existant"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": ["Auth"],
+                "description": "Authentification d'un utilisateur avec un email et un mot de passe pour obtenir un token JWT.",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "email": {
+                                    "example": "john@example.com"
+                                },
+                                "password": {
+                                    "example": "password123"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Authentification réussie, token JWT retourné"
+                    },
+                    "400": {
+                        "description": "Email ou mot de passe incorrect"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/reviews": {
+            "post": {
+                "tags": ["Review"],
+                "description": "Ajouter un commentaire ou une note pour une série ou un anime dans la base de données.",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "serie_anime_id": {
+                                    "example": "4"
+                                },
+                                "note": {
+                                    "example": "5"
+                                },
+                                "commentaire": {
+                                    "example": "Super anime !"
+                                },
+                                "pseudo_anonyme": {
+                                    "example": "true"
+                                },
+                                "type": {
+                                    "example": "animé"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Commentaire ajouté avec succès"
+                    },
+                    "400": {
+                        "description": "Données manquantes ou invalides"
+                    },
+                    "401": {
+                        "description": "Utilisateur non authentifié"
+                    },
+                    "403": {
+                        "description": "Accès interdit"
+                    },
+                    "404": {
+                        "description": "Série/Anime non trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/reviews/{serie_anime_id}": {
+            "get": {
+                "tags": ["Review"],
+                "description": "Obtenir les avis d'une série/anime à partir de son ID.",
+                "parameters": [
+                    {
+                        "name": "serie_anime_id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Avis de la série ou de l'anime récupérés avec succès"
+                    },
+                    "404": {
+                        "description": "Série/Anime non trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/reviews/{utilisateur_id}/{serie_anime_id}": {
+            "patch": {
+                "tags": ["Review"],
+                "description": "Mettre à jour la note et le commentaire d'un utilisateur pour une série/animé donné.",
+                "parameters": [
+                    {
+                        "name": "utilisateur_id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "serie_anime_id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "note": {
+                                    "example": "4"
+                                },
+                                "commentaire": {
+                                    "example": "Bien mais peut être amélioré"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Note et commentaire mis à jour avec succès"
+                    },
+                    "403": {
+                        "description": "Accès interdit"
+                    },
+                    "404": {
+                        "description": "Série/Anime ou utilisateur non trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/subscriptions": {
+            "get": {
+                "tags": ["Subscription"],
+                "description": "Obtenir la liste des abonnements de l'utilisateur.",
+                "responses": {
+                    "200": {
+                        "description": "Liste des abonnements récupérée avec succès"
+                    },
+                    "404": {
+                        "description": "Abonnements non trouvés"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "tags": ["User"],
+                "description": "Obtenir les informations d'un utilisateur à partir de son ID.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Informations de l'utilisateur récupérées avec succès"
+                    },
+                    "401": {
+                        "description": "Utilisateur non authentifié"
+                    },
+                    "403": {
+                        "description": "Accès interdit"
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/users/visibility/{id}": {
+            "patch": {
+                "tags": ["User"],
+                "description": "Mettre à jour la visibilité d'un utilisateur.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "est_public": {
+                                    "example": "true"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Visibilité mise à jour avec succès"
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/users/modification/{id}": {
+            "put": {
+                "tags": ["User"],
+                "description": "Modifier les informations d'un utilisateur, y compris le pseudo, l'email et le mot de passe.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "pseudo": {
+                                    "example": "john_doe_updated"
+                                },
+                                "email": {
+                                    "example": "newemail@example.com"
+                                },
+                                "mot_de_passe": {
+                                    "example": "newpassword123"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Informations mises à jour avec succès"
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/users/supprimer/{userId}": {
+            "delete": {
+                "tags": ["User"],
+                "description": "Supprimer un utilisateur à partir de son ID.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur supprimé avec succès"
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/watchlist/series/top": {
+            "get": {
+                "tags": ["Watchlist"],
+                "description": "Obtenir la liste des séries/animés les mieux notées.",
+                "responses": {
+                    "200": {
+                        "description": "Liste des séries/animés obtenue avec succès"
+                    },
+                    "404": {
+                        "description": "Aucune série/animé trouvée"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/watchlist/user/{userId}": {
+            "get": {
+                "tags": ["Watchlist"],
+                "description": "Obtenir les watchlists d'un utilisateur spécifique.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Watchlists de l'utilisateur récupérées avec succès"
+                    },
+                    "401": {
+                        "description": "Utilisateur non authentifié"
+                    },
+                    "403": {
+                        "description": "Accès interdit"
+                    },
+                    "404": {
+                        "description": "Utilisateur non trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/watchlist/{watchlistId}/series": {
+            "get": {
+                "tags": ["Watchlist"],
+                "description": "Obtenir la liste des séries/animés dans la watchlist d'un utilisateur.",
+                "parameters": [
+                    {
+                        "name": "watchlistId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des séries/animés de la watchlist obtenue avec succès"
+                    },
+                    "401": {
+                        "description": "Utilisateur non authentifié"
+                    },
+                    "403": {
+                        "description": "Accès interdit"
+                    },
+                    "404": {
+                        "description": "Watchlist non trouvée"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/watchlist/creer": {
+            "post": {
+                "tags": ["Watchlist"],
+                "description": "Créer une nouvelle watchlist pour l'utilisateur authentifié.",
+                "parameters": [
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Token d'authentification JWT de l'utilisateur"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "utilisateur_id": {
+                                    "example": "5"
+                                },
+                                "nom": {
+                                    "example": "Test"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Watchlist créée avec succès"
+                    },
+                    "401": {
+                        "description": "Non autorisé, utilisateur non authentifié"
+                    },
+                    "403": {
+                        "description": "Accès interdit, l'utilisateur ne dispose pas des droits nécessaires"
+                    }
+                }
+            }
+        },
+        "/api/watchlist/ajouter/{watchlistId}/{serieAnimeId}": {
+            "post": {
+                "tags": ["Watchlist"],
+                "description": "Ajouter une série/anime à la watchlist d'un utilisateur.",
+                "parameters": [
+                    {
+                        "name": "watchlistId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "L'ID de la watchlist à laquelle ajouter la série/anime"
+                    },
+                    {
+                        "name": "serieAnimeId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "L'ID de la série/anime à ajouter à la watchlist"
+                    },
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Token d'authentification JWT de l'utilisateur"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Série/Anime ajouté à la watchlist avec succès"
+                    },
+                    "400": {
+                        "description": "Requête incorrecte, paramètre manquant ou invalide"
+                    },
+                    "401": {
+                        "description": "Non autorisé, utilisateur non authentifié"
+                    },
+                    "403": {
+                        "description": "Accès interdit, l'utilisateur ne dispose pas des droits nécessaires"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/watchlist/statut/{watchlistId}/{serieAnimeId}": {
+            "patch": {
+                "tags": ["Watchlist"],
+                "description": "Mettre à jour le statut d'une série/anime dans une watchlist.",
+                "parameters": [
+                    {
+                        "name": "watchlistId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "L'ID de la watchlist contenant la série/anime"
+                    },
+                    {
+                        "name": "serieAnimeId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "L'ID de la série/anime dont le statut doit être mis à jour"
+                    },
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Token d'authentification JWT de l'utilisateur"
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "statut": {
+                                    "example": "1",
+                                    "description": "Statut de la série/anime dans la watchlist (1:Pas commencé, 2:En cours, 3:En pause, 4:Terminé, 5:Abandonné, 6:En attente de nouveaux épisodes)"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Statut mis à jour avec succès"
+                    },
+                    "400": {
+                        "description": "Requête incorrecte, statut invalide"
+                    },
+                    "401": {
+                        "description": "Non autorisé, utilisateur non authentifié"
+                    },
+                    "403": {
+                        "description": "Accès interdit, l'utilisateur ne dispose pas des droits nécessaires"
+                    },
+                    "404": {
+                        "description": "Watchlist ou série/anime non trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/watchlist/supprimer/{watchlistId}/{serieAnimeId}": {
+            "delete": {
+                "tags": ["Watchlist"],
+                "description": "Supprimer une série/anime d'une watchlist.",
+                "parameters": [
+                    {
+                        "name": "watchlistId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "L'ID de la watchlist dont la série/anime doit être supprimé"
+                    },
+                    {
+                        "name": "serieAnimeId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "L'ID de la série/anime à supprimer"
+                    },
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Token d'authentification JWT de l'utilisateur"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Série/Anime supprimé de la watchlist avec succès"
+                    },
+                    "400": {
+                        "description": "Requête incorrecte, paramètre manquant ou invalide"
+                    },
+                    "401": {
+                        "description": "Non autorisé, utilisateur non authentifié"
+                    },
+                    "403": {
+                        "description": "Accès interdit, l'utilisateur ne dispose pas des droits nécessaires"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        },
+        "/api/watchlist/supprimer/{watchlistId}": {
+            "delete": {
+                "tags": ["Watchlist"],
+                "description": "Supprimer une watchlist entière.",
+                "parameters": [
+                    {
+                        "name": "watchlistId",
+                        "in": "path",
+                        "required": true,
+                        "type": "string",
+                        "description": "L'ID de la watchlist à supprimer"
+                    },
+                    {
+                        "name": "authorization",
+                        "in": "header",
+                        "type": "string",
+                        "description": "Token d'authentification JWT de l'utilisateur"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Watchlist supprimée avec succès"
+                    },
+                    "400": {
+                        "description": "Requête incorrecte, paramètre manquant ou invalide"
+                    },
+                    "401": {
+                        "description": "Non autorisé, utilisateur non authentifié"
+                    },
+                    "403": {
+                        "description": "Accès interdit, l'utilisateur ne dispose pas des droits nécessaires"
+                    },
+                    "404": {
+                        "description": "Watchlist non trouvée"
+                    },
+                    "500": {
+                        "description": "Erreur interne du serveur"
+                    }
+                }
+            }
+        }
+    }
+}
