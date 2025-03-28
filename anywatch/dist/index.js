@@ -16,16 +16,18 @@ const express_1 = __importDefault(require("express"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const watchlist_routes_1 = __importDefault(require("./routes/watchlist.routes"));
-const db_1 = __importDefault(require("./config/db"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const review_routes_1 = __importDefault(require("./routes/review.routes"));
 const swagger_output_json_1 = __importDefault(require("./swagger-output.json"));
 const subscription_routes_1 = __importDefault(require("./routes/subscription.routes"));
+const env_1 = require("./config/env");
+const cors_1 = __importDefault(require("cors"));
+const db_1 = __importDefault(require("./config/db")); // Assure-toi que le chemin est correct
 const port = process.env.PORT || 4000;
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 // Route pour la documentation Swagger
-app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_output_json_1.default));
+app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_output_json_1.default));
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json({ message: "API REST avec Express en TypeScript" });
 }));
@@ -41,10 +43,17 @@ app.get("/test", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 app.use("/api/auth", auth_routes_1.default);
 app.use("/api/users", user_routes_1.default);
-app.use('/api/watchlist', watchlist_routes_1.default);
+app.use("/api/watchlist", watchlist_routes_1.default);
 app.use("/api/reviews", review_routes_1.default);
 app.use("/api", subscription_routes_1.default);
-// Démarrage du serveur
-app.listen(port, () => {
-    console.log(`URL de l'API: http://localhost:${port}`);
+app.listen(env_1.config.port, () => {
+    console.log(`✅ Serveur démarré sur le port ${env_1.config.port}`);
 });
+const corsOptions = {
+    origin: "https://ton-webstudio-url.com", // Remplace par l'URL de ton frontend Webstudio
+    methods: "GET, POST, PUT, PATCH, DELETE", // Méthodes autorisées
+    allowedHeaders: "Content-Type, Authorization", // En-têtes autorisés
+};
+// Applique CORS à toutes les routes
+app.use((0, cors_1.default)(corsOptions));
+app.use((0, cors_1.default)());

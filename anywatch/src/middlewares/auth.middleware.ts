@@ -1,34 +1,3 @@
-<<<<<<< HEAD:anywatch/src/middlewares/auth.middleware.ts
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { config } from "../config/env";
-
-export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
-	// Le token JWT est attendu dans l'en-tête Authorization sous la forme "Bearer <token>"
-	const authHeader = req.headers["authorization"];
-	const token = authHeader && authHeader.split(" ")[1];
-
-	if (!token) {
-		res.status(401).json({ message: "Accès refusé : token JWT manquant." });
-		return;
-	}
-
-	jwt.verify(token, config.jwtSecret, (err, decoded) => {
-		if (err) {
-			res.status(403).json({ message: "Accès refusé : token invalide." });
-			return;
-		}
-
-		if (typeof decoded === "string" || !decoded || !("id" in decoded)) {
-			res.status(403).json({ message: "Accès refusé : payload de token invalide." });
-			return;
-		}
-
-		req.user = decoded as { id: number };
-		next();
-	});
-};
-=======
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { config } from "../config/env";
@@ -97,4 +66,3 @@ export const isWatchlistOwner = async (req: Request, res: Response, next: NextFu
 		res.status(500).json({ message: "Erreur serveur" });
 	}
 };
->>>>>>> 3cab03ced567a1c747edbdb11c21861652f374e0:src/middlewares/auth.middleware.ts

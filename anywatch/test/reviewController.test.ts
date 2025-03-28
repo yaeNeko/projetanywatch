@@ -38,7 +38,9 @@ describe("createReview", () => {
     await createReview(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur non authentifié." });
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Utilisateur non authentifié.",
+    });
   });
 
   it("devrait renvoyer une erreur 400 si les données sont invalides (serie_anime_id)", async () => {
@@ -47,7 +49,9 @@ describe("createReview", () => {
     await createReview(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "serie_anime_id est requis et doit être un nombre valide." });
+    expect(res.json).toHaveBeenCalledWith({
+      message: "serie_anime_id est requis et doit être un nombre valide.",
+    });
   });
 
   it("devrait renvoyer une erreur 400 si la note est invalide", async () => {
@@ -56,7 +60,9 @@ describe("createReview", () => {
     await createReview(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "La note est requise et doit être 1, 2, 3, 4 ou 5." });
+    expect(res.json).toHaveBeenCalledWith({
+      message: "La note est requise et doit être 1, 2, 3, 4 ou 5.",
+    });
   });
 
   it("devrait renvoyer une erreur 404 si la série/animé n'existe pas", async () => {
@@ -65,7 +71,9 @@ describe("createReview", () => {
     await createReview(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ message: "La série/animé spécifiée n'existe pas." });
+    expect(res.json).toHaveBeenCalledWith({
+      message: "La série/animé spécifiée n'existe pas.",
+    });
   });
 
   it("devrait ajouter un avis et renvoyer un message de succès", async () => {
@@ -103,15 +111,17 @@ describe("createReview", () => {
 
   it("devrait renvoyer une erreur 500 si une erreur survient lors de la vérification de l'existence de la série/animé", async () => {
     (client.query as jest.Mock).mockRejectedValue(new Error("Erreur DB")); // Simule une erreur lors de la vérification de l'existence
-  
+
     await createReview(req, res, next);
-  
+
     expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ message: "Erreur serveur lors de la vérification de l'existence de la série/animé." });
-  });  
+    expect(res.json).toHaveBeenCalledWith({
+      message:
+        "Erreur serveur lors de la vérification de l'existence de la série/animé.",
+    });
+  });
 });
 
 beforeEach(() => {
-    jest.spyOn(console, "error").mockImplementation(() => {}); // Désactive console.error
+  jest.spyOn(console, "error").mockImplementation(() => {}); // Désactive console.error
 });
-  

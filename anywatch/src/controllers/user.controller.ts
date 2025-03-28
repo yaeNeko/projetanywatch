@@ -24,8 +24,9 @@ export const getUserProfile = async (
     const user = result.rows[0];
 
     // Vérification de la visibilité : si est_public est false (privé), le profil ne doit pas être montré
-    if (user.est_public === false) { // Vérification directe de la valeur booléenne
-      res.status(403).json({ message: 'Ce profil est privé' });
+    if (user.est_public === false) {
+      // Vérification directe de la valeur booléenne
+      res.status(403).json({ message: "Ce profil est privé" });
       return;
     }
 
@@ -39,12 +40,12 @@ export const getUserProfile = async (
   }
 };
 
-
-
-
 // Contrôleur pour la mise à jour de la visibilité (passer le profil en public ou privé)
 
-export const updateVisibility = async (req: Request, res: Response): Promise<void> => {
+export const updateVisibility = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const userId = req.params.id; // Récupère l'ID de l'utilisateur depuis les paramètres de la requête
   const { est_public } = req.body; // Récupère la nouvelle visibilité ('f' ou 't')
 
@@ -53,45 +54,50 @@ export const updateVisibility = async (req: Request, res: Response): Promise<voi
   try {
     // Requête SQL pour mettre à jour la visibilité de l'utilisateur
     const result = await client.query(
-      'UPDATE utilisateurs SET est_public = $1 WHERE id = $2 RETURNING *',
+      "UPDATE utilisateurs SET est_public = $1 WHERE id = $2 RETURNING *",
       [visibility, userId]
     );
 
     // Si l'utilisateur n'existe pas
     if (result.rowCount === 0) {
-      res.status(404).json({ message: 'Utilisateur non trouvé' });
+      res.status(404).json({ message: "Utilisateur non trouvé" });
       return;
     }
 
     // Renvoie une réponse avec les nouvelles informations de l'utilisateur
     const updatedUser = result.rows[0];
     res.status(200).json({
-      message: 'Visibilité mise à jour',
+      message: "Visibilité mise à jour",
       utilisateur: updatedUser,
     });
   } catch (error) {
-    console.error('Erreur lors de la mise à jour de la visibilité:', error);
-    res.status(500).json({ message: 'Erreur serveur' });
+    console.error("Erreur lors de la mise à jour de la visibilité:", error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
 
-
 // Mise à jour des informations de l'utilisateur
-export const updateUserProfile = async (req: Request, res: Response): Promise<void> => {
+export const updateUserProfile = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const userId = req.params.id; // Récupère l'ID de l'utilisateur depuis les paramètres de la requête
   const { pseudo, email, mot_de_passe } = req.body; // Récupère les nouvelles informations de l'utilisateur
 
   try {
     // Vérifier si l'utilisateur existe déjà dans la base de données
-    const result = await client.query('SELECT id FROM utilisateurs WHERE id = $1', [userId]);
+    const result = await client.query(
+      "SELECT id FROM utilisateurs WHERE id = $1",
+      [userId]
+    );
 
     if (result.rowCount === 0) {
-      res.status(404).json({ message: 'Utilisateur non trouvé' });
+      res.status(404).json({ message: "Utilisateur non trouvé" });
       return;
     }
 
     // Construction de la requête SQL pour la mise à jour des informations de l'utilisateur
-    let updateQuery = 'UPDATE utilisateurs SET';
+    let updateQuery = "UPDATE utilisateurs SET";
     const updateValues: any[] = [];
     let index = 1;
 
@@ -104,7 +110,7 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
       updateQuery += ` email = $${index++},`;
       updateValues.push(email);
     }
-   
+
     // Mise à jour du mot de passe (avec hashage)
     let hashedPassword = null;
     if (mot_de_passe) {
@@ -125,13 +131,15 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
 
     // Vérifier si la mise à jour a réussi
     if (updateResult.rowCount === 0) {
-      res.status(404).json({ message: 'Utilisateur non trouvé pour la mise à jour' });
+      res
+        .status(404)
+        .json({ message: "Utilisateur non trouvé pour la mise à jour" });
       return;
     }
 
     // Retourner les informations mises à jour
     res.status(200).json({
-      message: 'Informations utilisateur mises à jour avec succès',
+      message: "Informations utilisateur mises à jour avec succès",
       updatedUser: {
         id: userId,
         pseudo: pseudo || result.rows[0].pseudo,
@@ -140,37 +148,57 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
       },
     });
   } catch (error) {
-    console.error('Erreur lors de la mise à jour du profil utilisateur:', error);
-    res.status(500).json({ message: 'Erreur serveur' });
+    console.error(
+      "Erreur lors de la mise à jour du profil utilisateur:",
+      error
+    );
+    res.status(500).json({ message: "Erreur serveur" });
   }
 };
 
-
 // Supprimer un utilisateur
-export const deleteUser = async (req: Request, res: Response): Promise<void> => {
-    const { userId } = req.params;
+export const deleteUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { userId } = req.params;
 
-    try {
-        // Vérifier si l'utilisateur existe
-        const checkUser = await client.query('SELECT * FROM utilisateurs WHERE id = $1', [userId]);
+  try {
+    // Vérifier si l'utilisateur existe
+    const checkUser = await client.query(
+      "SELECT * FROM utilisateurs WHERE id = $1",
+      [userId]
+    );
 
-        if (checkUser.rowCount === 0) {
-            res.status(404).json({ message: 'Utilisateur non trouvé' });
-            return;
-        }
-
-        // Supprimer les dépendances avant l'utilisateur
-        await client.query('DELETE FROM avis WHERE utilisateur_id = $1', [userId]);
-        await client.query('DELETE FROM watchlist_ajouts WHERE utilisateur_id = $1', [userId]);
-        await client.query('DELETE FROM abonnes WHERE utilisateur_id = $1', [userId]);
-        await client.query('DELETE FROM watchlists WHERE utilisateur_id = $1', [userId]);
-
-        // Supprimer l'utilisateur
-        await client.query('DELETE FROM utilisateurs WHERE id = $1', [userId]);
-
-        res.status(200).json({ message: 'Compte utilisateur supprimé avec succès' });
-    } catch (error) {
-        console.error('Erreur lors de la suppression du compte utilisateur :', error);
-        res.status(500).json({ message: 'Erreur serveur' });
+    if (checkUser.rowCount === 0) {
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
     }
+
+    // Supprimer les dépendances avant l'utilisateur
+    await client.query("DELETE FROM avis WHERE utilisateur_id = $1", [userId]);
+    await client.query(
+      "DELETE FROM watchlist_ajouts WHERE utilisateur_id = $1",
+      [userId]
+    );
+    await client.query("DELETE FROM abonnes WHERE utilisateur_id = $1", [
+      userId,
+    ]);
+    await client.query("DELETE FROM watchlists WHERE utilisateur_id = $1", [
+      userId,
+    ]);
+
+    // Supprimer l'utilisateur
+    await client.query("DELETE FROM utilisateurs WHERE id = $1", [userId]);
+
+    res
+      .status(200)
+      .json({ message: "Compte utilisateur supprimé avec succès" });
+  } catch (error) {
+    console.error(
+      "Erreur lors de la suppression du compte utilisateur :",
+      error
+    );
+    res.status(500).json({ message: "Erreur serveur" });
+  }
 };

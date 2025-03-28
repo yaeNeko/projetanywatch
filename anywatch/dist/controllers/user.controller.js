@@ -14,19 +14,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteUser = exports.updateUserProfile = exports.updateVisibility = exports.getUserProfile = void 0;
 const db_1 = __importDefault(require("../config/db")); // Connexion à la base de données
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const getUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.params.id; // Récupère l'ID de l'utilisateur depuis les paramètres de la requête
     try {
         // Requête SQL pour récupérer les informations de l'utilisateur
-        const result = yield db_1.default.query("SELECT id, pseudo, email FROM utilisateurs WHERE id = $1", [userId]);
+        const result = yield db_1.default.query("SELECT id, pseudo, email, est_public FROM utilisateurs WHERE id = $1", [userId]);
         // Si l'utilisateur n'existe pas
         if (result.rowCount === 0) {
             res.status(404).json({ message: "Utilisateur non trouvé" });
             return;
         }
         const user = result.rows[0];
-        if (user.est_public === false) {
-            // Si le profil est privé, renvoie une erreur 403
+        // Vérification de la visibilité : si est_public est false (privé), le profil ne doit pas être montré
+        if (user.est_public === false) { // Vérification directe de la valeur booléenne
             res.status(403).json({ message: 'Ce profil est privé' });
             return;
         }
@@ -42,9 +43,10 @@ exports.getUserProfile = getUserProfile;
 const updateVisibility = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userId = req.params.id; // Récupère l'ID de l'utilisateur depuis les paramètres de la requête
     const { est_public } = req.body; // Récupère la nouvelle visibilité ('f' ou 't')
+    const visibility = est_public ? true : false;
     try {
         // Requête SQL pour mettre à jour la visibilité de l'utilisateur
-        const result = yield db_1.default.query('UPDATE utilisateurs SET est_public = $1 WHERE id = $2 RETURNING *', [est_public, userId]);
+        const result = yield db_1.default.query('UPDATE utilisateurs SET est_public = $1 WHERE id = $2 RETURNING *', [visibility, userId]);
         // Si l'utilisateur n'existe pas
         if (result.rowCount === 0) {
             res.status(404).json({ message: 'Utilisateur non trouvé' });
@@ -87,9 +89,12 @@ const updateUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, functi
             updateQuery += ` email = $${index++},`;
             updateValues.push(email);
         }
+        // Mise à jour du mot de passe (avec hashage)
+        let hashedPassword = null;
         if (mot_de_passe) {
+            hashedPassword = yield bcrypt_1.default.hash(mot_de_passe, 10); // Hash du mot de passe
             updateQuery += ` mot_de_passe = $${index++},`;
-            updateValues.push(mot_de_passe);
+            updateValues.push(hashedPassword);
         }
         // Retirer la dernière virgule de la requête
         updateQuery = updateQuery.slice(0, -1);

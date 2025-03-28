@@ -8,13 +8,47 @@ import swaggerSpec from "./swagger-output.json";
 import subscriptionRoutes from "./routes/subscription.routes";
 import { config } from "./config/env";
 import cors from "cors";
-import client from "./config/db"; // Assure-toi que le chemin est correct
+import client from "./config/db";
+import { createRateLimiter } from "./middlewares/rateLimit.middleware";
+import morgan from "morgan";
 
-const port = process.env.PORT || 4000;
+// Configuration CORS
+const corsOptions = {
+  origin: "https://webstudio-url.com", // URL WEBSTUIDO A REMPLACER
+  methods: "GET, POST, PUT, PATCH, DELETE", // Méthodes autorisées
+  allowedHeaders: "Content-Type, Authorization", // En-têtes autorisés
+};
 
 const app = express();
 
+// Middleware pour les logs
+app.use(morgan("combined"));
+
+// Configure trust proxy pour permettre l'utilisation de X-Forwarded-For
+// app.set("trust proxy", true); // Faire confiance à un seul proxy
+
+// Affiche l'adresse IP de l'utilisateur pour vérifier
+// app.use((req, res, next) => {
+//   console.log("Requête reçue !");
+//   console.log("Méthode :", req.method);
+//   console.log("URL :", req.originalUrl);
+//   console.log("Adresse IP (req.ip) :", req.ip);
+//   console.log("X-Forwarded-For :", req.headers["x-forwarded-for"]);
+//   console.log("Tous les headers :", req.headers);
+//   next();
+// });
+
+// const limiter = createRateLimiter(15 * 60 * 1000, 100);
+// Applique CORS avec options
+app.use(cors(corsOptions));
+// app.use(limiter);
+// Middleware pour parser les JSON
 app.use(express.json());
+
+// Middleware pour gérer les erreurs
+if (process.env.NODE_ENV === "production") {
+  console.log("Mode production détecté");
+}
 
 // Route pour la documentation Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -33,6 +67,7 @@ app.get("/test", async (req, res) => {
   }
 });
 
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/watchlist", watchlistRoutes);
@@ -42,14 +77,3 @@ app.use("/api", subscriptionRoutes);
 app.listen(config.port, () => {
   console.log(`✅ Serveur démarré sur le port ${config.port}`);
 });
-
-const corsOptions = {
-  origin: "https://ton-webstudio-url.com", // Remplace par l'URL de ton frontend Webstudio
-  methods: "GET, POST, PUT, PATCH, DELETE", // Méthodes autorisées
-  allowedHeaders: "Content-Type, Authorization", // En-têtes autorisés
-};
-
-// Applique CORS à toutes les routes
-app.use(cors(corsOptions));
-
-app.use(cors());

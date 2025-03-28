@@ -1,18 +1,24 @@
-import { Client } from 'pg';
+import { Client } from "pg";
 
-// Configuration de la connexion à la base de données
+// Vérification si DATABASE_URL est bien définie
+if (!process.env.DATABASE_URL) {
+  console.error("❌ DATABASE_URL n'est pas définie !");
+  process.exit(1);
+}
+
+// Configuration avancée pour accepter SSL même avec un certificat auto-signé
 const client = new Client({
-  connectionString: process.env.DATABASE_URL,  // Assure-toi que cette variable d'environnement est définie
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Ignore l'erreur de certificat auto-signé
+  },
 });
 
-// Connexion à la base de données
-client.connect()
-  .then(() => {
-    console.log('Connected to the database');
-  })
-  .catch(err => {
-    console.error('Connection error', err.stack);
-  });
+// Connexion à PostgreSQL
+client
+  .connect()
+  .then(() => console.log("✅ Connecté à PostgreSQL"))
+  .catch((err) => console.error("❌ Erreur de connexion PostgreSQL", err));
 
-// Exporter le client pour l'utiliser ailleurs dans le projet
+// Exporter le client pour l'utiliser ailleurs
 export default client;

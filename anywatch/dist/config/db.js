@@ -1,18 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const pg_1 = require("pg");
-const env_1 = require("./env");
+// Configuration de la connexion à la base de données
 const client = new pg_1.Client({
-    host: env_1.config.db_host,
-    port: env_1.config.db_port,
-    user: env_1.config.db_user,
-    password: env_1.config.db_password,
-    database: env_1.config.db_name,
-    ssl: { rejectUnauthorized: false }  // Nécessaire sur Heroku ou d'autres services cloud
-
+    connectionString: process.env.DATABASE_URL, // Assure-toi que cette variable d'environnement est définie
 });
-client
-    .connect()
-    .then(() => console.log("Connecté à PostgreSQL"))
-    .catch((err) => console.error("Erreur de connexion à PostgreSQL", err));
+// Connexion à la base de données
+client.connect()
+    .then(() => {
+    console.log('Connected to the database');
+})
+    .catch(err => {
+    console.error('Connection error', err.stack);
+});
+// Exporter le client pour l'utiliser ailleurs dans le projet
 exports.default = client;
